@@ -10,6 +10,8 @@ python = "^3.11"
 fastapi = "^0.115.0"
 SQLAlchemy = "^2.0.35"
 grpcio = "^1.66.2"
+grpcio-tools = "^1.67.0"
+pydantic-settings = "^2.5.2"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.6.8"
