@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package kagami_worker;
+
+service Worker {
+    rpc sync_from_upstream (SyncRequest) returns (SyncResponse);
+    rpc accept_register (RegisterResponse) returns (RegisterAck);
+}
+
+message SyncRequest {
+    string name = 1;
+}
+
+message SyncResponse {
+    int32 status = 1;
+    string message = 2;
+}
+
+message RegisterResponse {
+    bool accepted = 1;
+}
+
+message RegisterAck {
+    string message = 1;
+}

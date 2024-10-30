@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+package kagami_supervisor;
+
+service Supervisor {
+    rpc worker_report_in (WorkerReportInRequest) returns (google.protobuf.Empty);
+}
+
+message WorkerReportInRequest {
+    string worker_addr = 1;
+    int32 worker_status = 2;
+}
+
+message RegisterResponse {
+    bool accepted = 1;
+}

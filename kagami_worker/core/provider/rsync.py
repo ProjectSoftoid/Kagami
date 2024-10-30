@@ -8,6 +8,13 @@ logger = logging.getLogger(__name__)
 
 
 class RsyncProvider(BaseProvider):
+    """
+    RsyncProvider
+    replica_id: unique id for a replica provider, get it from supervisor
+    rsync_options: rsync options
+    """
+
+    replica_id: int
     rsync_options: list[str]
 
     def __init__(
@@ -60,5 +67,7 @@ class RsyncProvider(BaseProvider):
                 logger.info(f"Sync succeeded:\n {stdout}")
             else:
                 logger.info(f"Sync failed with error:\n {stderr}")
+            return process.returncode
+
         except Exception as e:
             logger.exception(f"An error occurred in SyncProvider: {e}")

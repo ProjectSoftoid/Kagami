@@ -1,4 +1,7 @@
-class BaseProvider:
+from abc import ABC, abstractmethod
+
+
+class BaseProvider(ABC):
     name: str
     work_dir: str
     upstream_url: str
@@ -20,3 +23,7 @@ class BaseProvider:
         self.upstream_url = upstream_url
         self.provider_method = provider_method
         self.retry = retry
+
+    @abstractmethod
+    async def sync_from_upstream(self):
+        raise NotImplementedError("sync_from_upstream Not implemented")
