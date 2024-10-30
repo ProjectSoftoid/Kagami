@@ -13,8 +13,9 @@ repos:
     rev: v1.11.2
     hooks:
       - id: mypy
-        additional_dependencies: []
-        args: [--ignore-missing-imports, --follow-imports, skip]
+        pass_filenames: false
+        additional_dependencies: [types-protobuf]
+        args: [--ignore-missing-imports, --follow-imports, skip, .]
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
