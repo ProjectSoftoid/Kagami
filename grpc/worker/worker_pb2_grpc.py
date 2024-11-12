@@ -5,26 +5,23 @@ import warnings
 
 import worker_pb2 as worker__pb2
 
-GRPC_GENERATED_VERSION = "1.67.0"
+GRPC_GENERATED_VERSION = '1.67.1'
 GRPC_VERSION = grpc.__version__
 _version_not_supported = False
 
 try:
     from grpc._utilities import first_version_is_lower
-
-    _version_not_supported = first_version_is_lower(
-        GRPC_VERSION, GRPC_GENERATED_VERSION
-    )
+    _version_not_supported = first_version_is_lower(GRPC_VERSION, GRPC_GENERATED_VERSION)
 except ImportError:
     _version_not_supported = True
 
 if _version_not_supported:
     raise RuntimeError(
-        f"The grpc package installed is at version {GRPC_VERSION},"
-        + f" but the generated code in worker_pb2_grpc.py depends on"
-        + f" grpcio>={GRPC_GENERATED_VERSION}."
-        + f" Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}"
-        + f" or downgrade your generated code using grpcio-tools<={GRPC_VERSION}."
+        f'The grpc package installed is at version {GRPC_VERSION},'
+        + f' but the generated code in worker_pb2_grpc.py depends on'
+        + f' grpcio>={GRPC_GENERATED_VERSION}.'
+        + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
+        + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
     )
 
 
@@ -38,17 +35,15 @@ class WorkerStub(object):
             channel: A grpc.Channel.
         """
         self.sync_from_upstream = channel.unary_unary(
-            "/kagami_worker.Worker/sync_from_upstream",
-            request_serializer=worker__pb2.SyncRequest.SerializeToString,
-            response_deserializer=worker__pb2.SyncResponse.FromString,
-            _registered_method=True,
-        )
-        self.accept_register = channel.unary_unary(
-            "/kagami_worker.Worker/accept_register",
-            request_serializer=worker__pb2.RegisterResponse.SerializeToString,
-            response_deserializer=worker__pb2.RegisterAck.FromString,
-            _registered_method=True,
-        )
+                '/kagami_worker.Worker/sync_from_upstream',
+                request_serializer=worker__pb2.SyncRequest.SerializeToString,
+                response_deserializer=worker__pb2.SyncResponse.FromString,
+                _registered_method=True)
+        self.register_accepted = channel.unary_unary(
+                '/kagami_worker.Worker/register_accepted',
+                request_serializer=worker__pb2.RegisterResponse.SerializeToString,
+                response_deserializer=worker__pb2.RegisterAck.FromString,
+                _registered_method=True)
 
 
 class WorkerServicer(object):
@@ -57,57 +52,54 @@ class WorkerServicer(object):
     def sync_from_upstream(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
-    def accept_register(self, request, context):
+    def register_accepted(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
 
 def add_WorkerServicer_to_server(servicer, server):
     rpc_method_handlers = {
-        "sync_from_upstream": grpc.unary_unary_rpc_method_handler(
-            servicer.sync_from_upstream,
-            request_deserializer=worker__pb2.SyncRequest.FromString,
-            response_serializer=worker__pb2.SyncResponse.SerializeToString,
-        ),
-        "accept_register": grpc.unary_unary_rpc_method_handler(
-            servicer.accept_register,
-            request_deserializer=worker__pb2.RegisterResponse.FromString,
-            response_serializer=worker__pb2.RegisterAck.SerializeToString,
-        ),
+            'sync_from_upstream': grpc.unary_unary_rpc_method_handler(
+                    servicer.sync_from_upstream,
+                    request_deserializer=worker__pb2.SyncRequest.FromString,
+                    response_serializer=worker__pb2.SyncResponse.SerializeToString,
+            ),
+            'register_accepted': grpc.unary_unary_rpc_method_handler(
+                    servicer.register_accepted,
+                    request_deserializer=worker__pb2.RegisterResponse.FromString,
+                    response_serializer=worker__pb2.RegisterAck.SerializeToString,
+            ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-        "kagami_worker.Worker", rpc_method_handlers
-    )
+            'kagami_worker.Worker', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers("kagami_worker.Worker", rpc_method_handlers)
+    server.add_registered_method_handlers('kagami_worker.Worker', rpc_method_handlers)
 
 
-# This class is part of an EXPERIMENTAL API.
+ # This class is part of an EXPERIMENTAL API.
 class Worker(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def sync_from_upstream(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
+    def sync_from_upstream(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/kagami_worker.Worker/sync_from_upstream",
+            '/kagami_worker.Worker/sync_from_upstream',
             worker__pb2.SyncRequest.SerializeToString,
             worker__pb2.SyncResponse.FromString,
             options,
@@ -118,26 +110,23 @@ class Worker(object):
             wait_for_ready,
             timeout,
             metadata,
-            _registered_method=True,
-        )
+            _registered_method=True)
 
     @staticmethod
-    def accept_register(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
+    def register_accepted(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/kagami_worker.Worker/accept_register",
+            '/kagami_worker.Worker/register_accepted',
             worker__pb2.RegisterResponse.SerializeToString,
             worker__pb2.RegisterAck.FromString,
             options,
@@ -148,5 +137,4 @@ class Worker(object):
             wait_for_ready,
             timeout,
             metadata,
-            _registered_method=True,
-        )
+            _registered_method=True)
