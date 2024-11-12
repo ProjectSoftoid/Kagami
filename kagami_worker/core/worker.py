@@ -3,7 +3,7 @@ import logging
 
 # from ..config import WorkerConfig
 from ..core.provider import BaseProvider
-from ...grpc.worker import worker_pb2_grpc
+from ...grpc.worker import worker_pb2_grpc, worker_pb2
 from ...grpc.supervisor import supervisor_pb2_grpc, supervisor_pb2
 
 logger = logging.getLogger(__name__)
@@ -34,15 +34,16 @@ class Worker(worker_pb2_grpc.WorkerServicer):
             self.providers[provider.name] = provider
 
     """
-    gRPC functions:
-    sync_from_upstream
-
+    gRPC function
+    sync_from_upstream()
+    Sync repo from upstream. Implemented for remote call.
     """
 
     async def sync_from_upstream(self, request, context):
         source_name = request.name
         logger.info(f"Syncing request from supervisor: {source_name}")
 
+        # search provider for {source_name}
         provider = self.get_provider(source_name)
         return_code = 0
         if provider:
@@ -53,21 +54,41 @@ class Worker(worker_pb2_grpc.WorkerServicer):
         return return_code
 
     """
-    worker functions:
-    report_in
+    gRPC function
+    accept_register()
+    Callback function for register request was accepted by supervisor.
+    """
+
+    async def register_accepted(self, request, context):
+        accepted = request.accepted
+        if accepted:
+            self.registered = True
+            message = "Worker Registered"
+        return worker_pb2.RegisterAck(message=message)
 
     """
+    worker function
+    report_in()
+    Send register request to supervisor (first connect).
+    """
+
+    async def report_in(self):
+        self._register_report_in()
 
     async def _register_report_in(self):
         if not self.registered:
+            # create channel
+            # TODO secure channel
             async with grpc.aio.insecure_channel(self.supervisor_addr) as channel:
                 stub = supervisor_pb2_grpc.SupervisorStub(channel=channel)
+                # TODO send provider infos
                 # provider_names = list(self.providers.keys())
                 request = supervisor_pb2.WorkerReportInRequest(
                     worker_addr=self.worker_addr, worker_status=self.get_worker_status()
                 )
 
                 try:
+                    # send report_in request with gRPC
                     response = stub.worker_report_in(request)
                     logger.info(f"Worker: {self.worker_addr} sent report in")
                     logger.debug(f"Response: {response}")
@@ -76,11 +97,48 @@ class Worker(worker_pb2_grpc.WorkerServicer):
                         f"Failed to send report in worker: {self.worker_addr}, {e}"
                     )
 
-    def get_worker_status(self):
-        return 1  # will be implemented
+    """
+    worker function
+    update_provider_status()
+    Update provider status to supervisor, using gRPC call.
+    Call this when provider status has changed.
+    """
+
+    async def update_provider_status(self, name: str):
+        logger.info(f"Update provider status for {name}")
+        provider = self.get_provider(name)
+        assert provider is not None
+        # TODO secure channel
+        async with grpc.aio.insecure_channel(self.supervisor_addr) as channel:
+            stub = supervisor_pb2_grpc.SupervisorStub(channel=channel)
+            request = supervisor_pb2.UpdateProviderRequest(
+                provider_replica_id=provider.replica_id,
+                provider_status=provider.provider_status,
+            )
+            try:
+                # send update_provider_status request with gRPC
+                response = stub.update_provider_status(request)
+                logger.info(f"Provider: {provider.name} sent update status")
+                logger.debug(f"Response: {response}")
+            except grpc.RpcError as e:
+                logger.exception(
+                    f"Failed to send update for provider: {provider.name}: {e}"
+                )
+
+    """
+    utils
+    get_provider()
+    Return a provider according to the name
+    """
 
     def get_provider(self, name: str) -> BaseProvider | None:
         return self.providers.get(name)
+
+    """
+    utils
+    _parse_address()
+    Return full address
+    """
 
     @staticmethod
     def _parse_address(host: str, port: int):
