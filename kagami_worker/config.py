@@ -9,7 +9,10 @@ class ProviderConfig(BaseSettings):
     retry: bool
 
     # for rsync provider
-    rsync_options: list[str]
+    rsync_options: list[str] | None
+
+    # for git provider
+    git_options: list[str] | None
 
 
 class WorkerConfig(BaseSettings):
