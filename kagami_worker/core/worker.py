@@ -73,7 +73,7 @@ class Worker(worker_pb2_grpc.WorkerServicer):
     """
 
     async def report_in(self):
-        self._register_report_in()
+        await self._register_report_in()
 
     async def _register_report_in(self):
         if not self.registered:
