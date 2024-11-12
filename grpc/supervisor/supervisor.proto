@@ -6,6 +6,7 @@ package kagami_supervisor;
 
 service Supervisor {
     rpc worker_report_in (WorkerReportInRequest) returns (google.protobuf.Empty);
+    rpc update_provider_status (UpdateProviderRequest) returns (google.protobuf.Empty);
 }
 
 message WorkerReportInRequest {
@@ -15,4 +16,9 @@ message WorkerReportInRequest {
 
 message RegisterResponse {
     bool accepted = 1;
+}
+
+message UpdateProviderRequest {
+    int32 provider_replica_id = 1;
+    int32 provider_status = 2;
 }

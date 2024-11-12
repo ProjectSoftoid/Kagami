@@ -4,7 +4,7 @@ package kagami_worker;
 
 service Worker {
     rpc sync_from_upstream (SyncRequest) returns (SyncResponse);
-    rpc accept_register (RegisterResponse) returns (RegisterAck);
+    rpc register_accepted (RegisterResponse) returns (RegisterAck);
 }
 
 message SyncRequest {
