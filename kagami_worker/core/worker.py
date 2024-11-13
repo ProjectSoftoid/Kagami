@@ -67,6 +67,21 @@ class Worker(worker_pb2_grpc.WorkerServicer):
         return worker_pb2.RegisterAck(message=message)
 
     """
+    gRPC function
+    health_check()
+    For supervisor to check worker health by exchanging address.
+    """
+
+    async def health_check(self, request, context):
+        try:
+            assert request.supervisor_addr == self.supervisor_addr
+            return worker_pb2.HealthCheckResponse(worker_addr=self.worker_addr)
+        except AssertionError as ae:
+            logger.error(
+                f"Supervisor Address not match: {request.supervisor_addr}, {ae}"
+            )
+
+    """
     worker function
     report_in()
     Send register request to supervisor (first connect).

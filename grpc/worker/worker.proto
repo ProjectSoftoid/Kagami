@@ -5,6 +5,7 @@ package kagami_worker;
 service Worker {
     rpc sync_from_upstream (SyncRequest) returns (SyncResponse);
     rpc register_accepted (RegisterResponse) returns (RegisterAck);
+    rpc health_check (HealthCheckRequest) returns (HealthCheckResponse);
 }
 
 message SyncRequest {
@@ -22,4 +23,12 @@ message RegisterResponse {
 
 message RegisterAck {
     string message = 1;
+}
+
+message HealthCheckRequest {
+    string supervisor_addr = 1;
+}
+
+message HealthCheckResponse {
+    string worker_addr = 1;
 }
