@@ -37,5 +37,5 @@ class BaseProvider(ABC):
         self.provider_status = ProviderStatus.INIT
 
     @abstractmethod
-    async def sync_from_upstream(self):
+    async def sync_from_upstream(self) -> int | None:
         raise NotImplementedError("sync_from_upstream Not implemented")

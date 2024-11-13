@@ -48,7 +48,7 @@ class RsyncProvider(BaseProvider):
 
         return " ".join(shlex.quote(arg) for arg in cmd)
 
-    async def sync_from_upstream(self):
+    async def sync_from_upstream(self) -> int | None:
         if not self.provider_cmdline:
             self.provider_cmdline = self._build_commandline()
         assert self.provider_cmdline
@@ -62,10 +62,11 @@ class RsyncProvider(BaseProvider):
             stdout, stderr = await process.communicate()
 
             if process.returncode == 0:
-                logger.info(f"Sync succeeded:\n {stdout}")
+                logger.info(f"Sync succeeded:\n {stdout!r}")
             else:
-                logger.info(f"Sync failed with error:\n {stderr}")
+                logger.info(f"Sync failed with error:\n {stderr!r}")
             return process.returncode
 
         except Exception as e:
             logger.exception(f"An error occurred in SyncProvider: {e}")
+            return 1
