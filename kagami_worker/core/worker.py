@@ -45,13 +45,17 @@ class Worker(worker_pb2_grpc.WorkerServicer):
 
         # search provider for {source_name}
         provider = self.get_provider(source_name)
-        return_code = 0
+        return_code = 1
+        msg = ""
         if provider:
             return_code = await provider.sync_from_upstream()
+            if return_code == 0:
+                msg = "Success"
         else:
             logger.error(f"No provider found for {source_name}")
+            msg = "Failed"
 
-        return return_code
+        return worker_pb2.SyncResponse(status=return_code, message=msg)
 
     """
     gRPC function
