@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0cworker.proto\x12\rkagami_worker\"\x1b\n\x0bSyncRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"/\n\x0cSyncResponse\x12\x0e\n\x06status\x18\x01 \x01(\x05\x12\x0f\n\x07message\x18\x02 \x01(\t\"$\n\x10RegisterResponse\x12\x10\n\x08\x61\x63\x63\x65pted\x18\x01 \x01(\x08\"\x1e\n\x0bRegisterAck\x12\x0f\n\x07message\x18\x01 \x01(\t2\xa9\x01\n\x06Worker\x12M\n\x12sync_from_upstream\x12\x1a.kagami_worker.SyncRequest\x1a\x1b.kagami_worker.SyncResponse\x12P\n\x11register_accepted\x12\x1f.kagami_worker.RegisterResponse\x1a\x1a.kagami_worker.RegisterAckb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0cworker.proto\x12\rkagami_worker\"\x1b\n\x0bSyncRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"/\n\x0cSyncResponse\x12\x0e\n\x06status\x18\x01 \x01(\x05\x12\x0f\n\x07message\x18\x02 \x01(\t\"$\n\x10RegisterResponse\x12\x10\n\x08\x61\x63\x63\x65pted\x18\x01 \x01(\x08\"\x1e\n\x0bRegisterAck\x12\x0f\n\x07message\x18\x01 \x01(\t\"-\n\x12HealthCheckRequest\x12\x17\n\x0fsupervisor_addr\x18\x01 \x01(\t\"*\n\x13HealthCheckResponse\x12\x13\n\x0bworker_addr\x18\x01 \x01(\t2\x80\x02\n\x06Worker\x12M\n\x12sync_from_upstream\x12\x1a.kagami_worker.SyncRequest\x1a\x1b.kagami_worker.SyncResponse\x12P\n\x11register_accepted\x12\x1f.kagami_worker.RegisterResponse\x1a\x1a.kagami_worker.RegisterAck\x12U\n\x0chealth_check\x12!.kagami_worker.HealthCheckRequest\x1a\".kagami_worker.HealthCheckResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -39,6 +39,10 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_REGISTERRESPONSE']._serialized_end=145
   _globals['_REGISTERACK']._serialized_start=147
   _globals['_REGISTERACK']._serialized_end=177
-  _globals['_WORKER']._serialized_start=180
-  _globals['_WORKER']._serialized_end=349
+  _globals['_HEALTHCHECKREQUEST']._serialized_start=179
+  _globals['_HEALTHCHECKREQUEST']._serialized_end=224
+  _globals['_HEALTHCHECKRESPONSE']._serialized_start=226
+  _globals['_HEALTHCHECKRESPONSE']._serialized_end=268
+  _globals['_WORKER']._serialized_start=271
+  _globals['_WORKER']._serialized_end=527
 # @@protoc_insertion_point(module_scope)

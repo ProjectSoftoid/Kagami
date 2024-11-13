@@ -57,12 +57,51 @@ class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
                 try:
                     # send register_accepted to worker with gRPC
                     response = stub.register_accepted(request)
+                    self.unregistered_worker.pop()
                     logger.info(f"Accepted register from worker: {worker_addr}")
                     logger.debug(f"Response: {response}")
                 except grpc.RpcError as e:
                     logger.exception(
                         f"Failed to send register_accepted to worker: {worker_addr}, {e}"
                     )
+
+    """
+    worker function
+    get_unregistered_worker()
+    Get workers reported in and waiting in queue.
+    """
+
+    async def get_unregistered_worker(self) -> list[str]:
+        return self.unregistered_worker
+
+    """
+    worker function
+    check_worker_health()
+    Check worker's connectivity by exchanging supervisor_addr and worker_addr
+    """
+
+    async def check_worker_health(self, worker_addr: str):
+        logger.debug(f"Check worker health: {worker_addr}")
+        async with grpc.aio.insecure_channel(worker_addr) as channel:
+            stub = worker_pb2_grpc.WorkerStub(channel=channel)
+            # TODO secure channel
+            request = worker_pb2.HealthCheckRequest(
+                supervisor_addr=self.supervisor_addr
+            )
+            try:
+                # send register_accepted to worker with gRPC
+                response = stub.health_check(request)
+                # check worker_addr in response
+                assert worker_addr == response.worker_addr
+                logger.debug(f"Health check successfully: {worker_addr}")
+            except grpc.RpcError as e:
+                logger.exception(
+                    f"Failed to check health of worker: {worker_addr}, {e}"
+                )
+            except AssertionError as ae:
+                logger.exception(
+                    f"Worker Address is not the same as response: {worker_addr}, response: {request.worker_addr}, {ae}"
+                )
 
     @staticmethod
     def _parse_address(host: str, port: int):
