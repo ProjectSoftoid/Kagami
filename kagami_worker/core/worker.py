@@ -1,10 +1,12 @@
-import grpc
 import logging
+
+import grpc
+
+from ...grpc.supervisor import supervisor_pb2, supervisor_pb2_grpc
+from ...grpc.worker import worker_pb2, worker_pb2_grpc
 
 # from ..config import WorkerConfig
 from ..core.provider import BaseProvider
-from ...grpc.worker import worker_pb2_grpc, worker_pb2
-from ...grpc.supervisor import supervisor_pb2_grpc, supervisor_pb2
 
 logger = logging.getLogger(__name__)
 

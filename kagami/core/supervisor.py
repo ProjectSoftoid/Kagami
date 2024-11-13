@@ -1,18 +1,20 @@
 import logging
+
 import grpc
 
-from .models import WorkerInfo
-from .models.provider_info import ProviderStatus
-
-from ...grpc.worker import worker_pb2_grpc, worker_pb2
 from ...grpc.supervisor import supervisor_pb2_grpc
-
+from ...grpc.worker import worker_pb2, worker_pb2_grpc
+from .models import ResourceInfo, WorkerInfo
+from .models.provider_info import ProviderStatus
+from .models.resource_info import ResourceStatus
 
 logger = logging.getLogger(__name__)
 
 
 class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
     supervisor_addr: str
+
+    resources: dict[str, ResourceInfo]  # resource_name -> ResourceInfo
 
     registered_workers: dict[str, WorkerInfo]  # worker_addr -> WorkerInfo
     unregistered_worker: list[str]  # list[worker_addr]
@@ -22,6 +24,7 @@ class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
         supervisor_host: str,
         supervisor_port: int,
         worker_info_list: list[WorkerInfo | None],
+        resource_info_list: list[ResourceInfo | None],
     ):
         super().__init__()
         self.supervisor_addr = self._parse_address(supervisor_host, supervisor_port)
@@ -31,6 +34,12 @@ class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
             if worker_info is not None:
                 raw_worker_info[worker_info.worker_addr] = worker_info
         self.registered_workers = raw_worker_info
+
+        # build resource_info
+        raw_resource_info = {}
+        for resource_info in resource_info_list:
+            if resource_info is not None:
+                raw_resource_info[resource_info.name] = resource_info
 
         self.unregistered_worker = []
 
@@ -69,7 +78,7 @@ class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
             logger.error(f"Provider not found for: {worker_addr}:{provider_replica_id}")
 
     """
-    worker function
+    supervisor function
     register_worker()
     Accept worker report in.
     """
@@ -89,11 +98,11 @@ class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
                     logger.debug(f"Response: {response}")
                 except grpc.RpcError as e:
                     logger.exception(
-                        f"Failed to send register_accepted to worker: {worker_addr}, {e}"
+                        f"Failed to send register_accepted to worker: {worker_addr},{e}"
                     )
 
     """
-    worker function
+    supervisor function
     get_unregistered_worker()
     Get workers reported in and waiting in queue.
     """
@@ -102,7 +111,7 @@ class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
         return self.unregistered_worker
 
     """
-    worker function
+    supervisor function
     check_worker_health()
     Check worker's connectivity by exchanging supervisor_addr and worker_addr
     """
@@ -127,8 +136,33 @@ class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
                 )
             except AssertionError as ae:
                 logger.exception(
-                    f"Worker Address is not the same as response: {worker_addr}, response: {request.worker_addr}, {ae}"
+                    f"Worker Address not the same: {worker_addr}:"
+                    f"{request.worker_addr}, {ae}"
                 )
+
+    """
+    supervisor function
+    get_resource_status()
+    Get status of a resource.
+    """
+
+    async def get_resource_status(self, name: str) -> ResourceStatus | None:
+        resource = self.resources.get(name)
+        resource_status = None
+        if resource is not None:
+            resource_status = resource.status
+        else:
+            logger.error(f"Could not get resource status of: {name}")
+        return resource_status
+
+    """
+    supervisor function
+    list_resource()
+    List all the resource record in supervisor
+    """
+
+    async def list_resource(self) -> dict[str, ResourceInfo]:
+        return self.resources
 
     @staticmethod
     def _parse_address(host: str, port: int):
