@@ -21,13 +21,13 @@ class WorkerInfo:
     worker_addr: str
     providers: dict[str, ProviderInfo]  # name -> ProviderInfo
 
-    async def get_provider_by_name(self, name: str) -> ProviderInfo | None:
+    def get_provider_by_name(self, name: str) -> ProviderInfo | None:
         provider = self.providers.get(name)
         if not provider:
             logger.warning(f"No provider found: {name}")
         return provider
 
-    async def get_provider_by_replica_id(self, replica_id: int) -> ProviderInfo | None:
+    def get_provider_by_replica_id(self, replica_id: int) -> ProviderInfo | None:
         provider = None
         for provider in self.providers.values():
             if provider.replica_id == replica_id:
