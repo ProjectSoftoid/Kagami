@@ -12,12 +12,15 @@ logger = logging.getLogger(__name__)
 
 class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
     supervisor_addr: str
-    worker_info: WorkerInfo | None
+    worker_info: list[WorkerInfo | None]
 
     unregistered_worker: list[str]  # list[worker_addr]
 
     def __init__(
-        self, supervisor_host: str, supervisor_port: int, worker_info: WorkerInfo | None
+        self,
+        supervisor_host: str,
+        supervisor_port: int,
+        worker_info: list[WorkerInfo | None],
     ):
         super().__init__()
         self.supervisor_addr = self._parse_address(supervisor_host, supervisor_port)
