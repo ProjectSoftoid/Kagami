@@ -2,6 +2,7 @@ import logging
 import grpc
 
 from .models import WorkerInfo
+from .models.provider_info import ProviderStatus
 
 from ...grpc.worker import worker_pb2_grpc, worker_pb2
 from ...grpc.supervisor import supervisor_pb2_grpc
@@ -12,19 +13,25 @@ logger = logging.getLogger(__name__)
 
 class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
     supervisor_addr: str
-    worker_info: list[WorkerInfo | None]
 
+    registered_workers: dict[str, WorkerInfo]  # worker_addr -> WorkerInfo
     unregistered_worker: list[str]  # list[worker_addr]
 
     def __init__(
         self,
         supervisor_host: str,
         supervisor_port: int,
-        worker_info: list[WorkerInfo | None],
+        worker_info_list: list[WorkerInfo | None],
     ):
         super().__init__()
         self.supervisor_addr = self._parse_address(supervisor_host, supervisor_port)
-        self.worker_info = worker_info
+        # build worker_info
+        raw_worker_info = {}
+        for worker_info in worker_info_list:
+            if worker_info is not None:
+                raw_worker_info[worker_info.worker_addr] = worker_info
+        self.registered_workers = raw_worker_info
+
         self.unregistered_worker = []
 
     # TODO load config from database and configuration file
@@ -43,6 +50,23 @@ class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
         # worker_status = request.worker_status
         logger.info(f"Recive worker report in: {worker_addr}")
         self.unregistered_worker.append(worker_addr)
+
+    """
+    gRPC function
+    update_provider_status()
+    Update provider's status after provider status had changed.
+    """
+
+    async def update_provider_status(self, request, context):
+        worker_addr = request.worker_addr
+        provider_replica_id = request.provider_replica_id
+        provider_status = request.provider_status
+        worker = self.registered_workers.get(worker_addr)
+        provider = worker.get_provider_by_replica_id(provider_replica_id)
+        if provider is not None:
+            provider.provider_status = ProviderStatus(provider_status)
+        else:
+            logger.error(f"Provider not found for: {worker_addr}:{provider_replica_id}")
 
     """
     worker function

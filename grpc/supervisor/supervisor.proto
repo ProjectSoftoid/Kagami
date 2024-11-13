@@ -19,6 +19,7 @@ message RegisterResponse {
 }
 
 message UpdateProviderRequest {
-    int32 provider_replica_id = 1;
-    int32 provider_status = 2;
+    string worker_addr = 1;
+    int32 provider_replica_id = 2;
+    int32 provider_status = 3;
 }
