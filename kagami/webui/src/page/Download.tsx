@@ -8,13 +8,13 @@ import Downsection from '../DownloadPage/Downloadwindow';
 
 
 const Downloadpage=()=>{
- 
+
 return(
     <div className="Downloadpage">
       <Firstsection />
       <Downsection />
 
-      
+
     </div>
 )
 }

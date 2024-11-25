@@ -2,36 +2,36 @@
     position: relative;
     height: -50vh;
   }
-  
+
   .firstSection {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 20px;
-  
+
     .logoSection {
       display: flex;
       align-items: center;
-  
+
       .logo {
         height: 50px;
         width: auto;
         margin-right: 16px;
       }
-  
+
       .word {
         height: 20px;
         width: auto;
         margin-left: 5px;
-        
+
       }
     }
-  
+
     .navLinks {
       display: flex;
       gap: 16px;
       align-items: center;
-  
+
       a {
         font-size: 1rem;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
