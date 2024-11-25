@@ -4,13 +4,13 @@
     align-items: center; // 水平居中
     justify-content: center; // 垂直方向居中
     min-height: 54vh; // 使用最小高度代替固定高度
-    
+
     background-position: center; // 居中图像
     background-size: cover; // 调整图像大小以覆盖整个容器
     background-repeat: no-repeat; // 防止图像重复
     padding-top: 20px; // 添加顶部内边距，避免内容贴边
   }
-  
+
   .logo {
     margin-top: 0; // 移除多余的顶部间距
     img {
@@ -18,18 +18,18 @@
       height: auto; // 保持宽高比
     }
   }
-  
+
   .name {
     margin-top: 10px; // 调整与 logo 之间的间距
   }
-  
+
   .searchContainer {
     display: flex;
     justify-content: center; // 水平居中
     align-items: center; // 垂直居中
     margin-top: 10px; // 减小顶部间距
   }
-  
+
   .searchInput {
     width: 300px; // 搜索栏的宽度
     padding: 10px; // 内边距
@@ -37,7 +37,7 @@
     border-radius: 4px; // 圆角
     font-size: 16px; // 字体大小
   }
-  
+
   .searchButton {
     padding: 10px 20px; // 内边距
     margin-left: 10px; // 左边距
@@ -48,7 +48,7 @@
     font-size: 16px; // 字体大小
     cursor: pointer; // 鼠标指针
   }
-  
+
   .searchButton:hover {
     background-color: #0056b3; // 悬停时的背景颜色
   }

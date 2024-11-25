@@ -8,7 +8,7 @@ import Thirdsection from "../introduction_page/Thirdsection";
 
 
 const Advertisementpage=()=>{
- 
+
 return(
     <div className="Advertisementpage">
       <Firstsection />

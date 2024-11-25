@@ -8,11 +8,11 @@ import Firstsection from '../introduction_page/Firstsection';
 
 
 const Mirrorpage=()=>{
- 
+
 return(
     <div className="Advertisementpage">
       <Firstsection />
-      
+
     </div>
 )
 }

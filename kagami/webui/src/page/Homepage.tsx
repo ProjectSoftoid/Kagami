@@ -5,7 +5,7 @@ import Secondsection from '../introduction_page/Secondsection';
 import Thirdsection from '../introduction_page/Thirdsection';
 const Homepage = () => {
  const navigate= useNavigate();
- 
+
    return(
     <div className="Homepage">
     <Firstsection />
