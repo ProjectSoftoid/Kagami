@@ -41,7 +41,7 @@ const AdSection: React.FC = () => {
                 }}
               ></div>
               <small>{item.data.date}</small>
-              
+
             </li>
           ))}
         </ul>

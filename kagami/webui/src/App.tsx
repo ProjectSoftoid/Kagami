@@ -18,7 +18,7 @@ function App() {
       <Route path="/domain" element={<Domainpage />} />
       <Route path="/mirror" element={<Mirrorpage />} />
       <Route path="/state" element={<Statepage />} />
-      </Routes > 
+      </Routes >
     </Router>
   );
 }

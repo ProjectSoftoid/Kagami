@@ -8,13 +8,13 @@
     padding: 20px; // 内边距
     height: 100vh; // 使用视口高度
   }
-  
+
   h1 {
     font-family: 'Playfair Display', serif; // 使用 Playfair Display 字体
     font-size: 2.5rem; // 字体大小
     margin-bottom: 20px; // 底部间距
   }
-  
+
   .DomainBox {
     background-color:#1f1f1f; // 背景颜色为黑色
     color: white; // 字体颜色为白色
@@ -28,7 +28,7 @@
     justify-content: flex-start;
     overflow: hidden;
   }
-  
+
   .DomainBox p {
     font-family: 'Roboto', sans-serif; // 使用 Roboto 字体
     font-size: 1.4rem; // 字体大小
