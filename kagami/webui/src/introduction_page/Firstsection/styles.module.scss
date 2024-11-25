@@ -1,0 +1,50 @@
+.Container {
+    position: relative;
+    height: -50vh;
+  }
+  
+  .firstSection {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+  
+    .logoSection {
+      display: flex;
+      align-items: center;
+  
+      .logo {
+        height: 50px;
+        width: auto;
+        margin-right: 16px;
+      }
+  
+      .word {
+        height: 20px;
+        width: auto;
+        margin-left: 5px;
+        
+      }
+    }
+  
+    .navLinks {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+  
+      a {
+        font-size: 1rem;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        text-decoration: none;
+        color: #000;
+        cursor: pointer; /* 鼠标悬停时显示手型光标 */
+       padding: 5px 10px; /* 添加一些内边距 */
+       border: 1px solid transparent; /* 初始边框透明 */
+       border-radius: 4px; /* 添加圆角 */
+       transition: border-color 0.3s; /* 添加边框颜色过渡效果 */
+      }
+      a:hover {
+        border-color: #090000ad; /* 鼠标悬停时显示边框 */
+      }
+    }
+  }
