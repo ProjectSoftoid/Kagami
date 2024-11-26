@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ...models.worker import Worker, WorkerRegStatus
+from ..models.worker import Worker, WorkerRegStatus
 
 
 class SessionManager:
