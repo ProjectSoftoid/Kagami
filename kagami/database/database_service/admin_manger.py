@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ..models.admin import Admin, AdminPermissions
 
 
-class admin_service:
+class AdminService:
     _session: AsyncSession
 
     def __init__(self, session: AsyncSession) -> None:
@@ -29,7 +29,7 @@ class admin_service:
         self._session.delete(origin_account)
         self._session.commit()
 
-    def change_admin(
+    def update_admin(
         self,
         id: int,
         name: str,

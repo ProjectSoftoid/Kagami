@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ..models.worker import Worker, WorkerRegStatus
 
 
-class worker_service:
+class WorkerService:
     _session: AsyncSession
 
     def __init__(self, session: AsyncSession) -> None:
@@ -23,7 +23,7 @@ class worker_service:
         self._session.delete(aim_worker)
         self._session.commit()
 
-    def change_workerinfo(self, address: str, reg_status: WorkerRegStatus):
+    def update_workerinfo(self, address: str, reg_status: WorkerRegStatus):
 
         aim_worker = self._session.execute(
             select(Worker).where(Worker.worker_addr == address)
