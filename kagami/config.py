@@ -7,6 +7,7 @@ class SupervisorConfig(BaseSettings):
 
     log_file: str = "/var/log/kagami_worker.log"
     log_level: str = "INFO"
+    database_url: str = "change_me"
 
     class Config:
         env_prefix = "KAGAMI_SUPERVISOR_"
