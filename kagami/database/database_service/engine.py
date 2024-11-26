@@ -4,10 +4,6 @@ from sqlalchemy.orm import sessionmaker
 from ...config import SupervisorConfig
 
 
-class BaseSession:
-    _session: AsyncSession
-
-
 class DatabaseEngine:
     _engine: AsyncEngine
 
