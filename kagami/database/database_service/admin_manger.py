@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ..models.admin import Admin, AdminPermissions
 
 
-class SessionManager:
+class admin_service:
     _session: AsyncSession
 
     def __init__(self, session: AsyncSession) -> None:

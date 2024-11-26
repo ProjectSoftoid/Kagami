@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ..models.worker import Worker, WorkerRegStatus
 
 
-class SessionManager:
+class worker_service:
     _session: AsyncSession
 
     def __init__(self, session: AsyncSession) -> None:
