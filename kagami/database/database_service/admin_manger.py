@@ -14,14 +14,14 @@ class AdminService:
     def add_admin(self, name: str, raw_password: str, permissions: AdminPermissions):
         bytes = raw_password.encode("utf-8")
         salt = bcrypt.gensalt()
-        in_hash_password = bcrypt.hashpw(bytes, salt)
+        hashed_password = bcrypt.hashpw(bytes, salt)
 
-        input = Admin(
+        new_admin = Admin(
             name=name,
-            hashed_pasword=in_hash_password,
+            hashed_pasword=hashed_password,
             admin_permission=permissions,
         )
-        self._session.add_all(input)
+        self._session.add_all(new_admin)
         self._session.commit()
 
     def delete_admin(self, id: int):
@@ -29,21 +29,13 @@ class AdminService:
         self._session.delete(origin_account)
         self._session.commit()
 
-    def update_admin(
-        self,
-        id: int,
-        name: str,
-        raw_password: str,
-        permissions: AdminPermissions,
-    ):
+    def update_admin(self, id: int, name: str, raw_password: str):
         bytes = raw_password.encode("utf-8")
         salt = bcrypt.gensalt()
-        in_hash_password = bcrypt.hashpw(bytes, salt)
+        hashed_password = bcrypt.hashpw(bytes, salt)
 
         origin_account = self._session.execute(select(Admin).where(Admin.id == id))
 
         origin_account.name = name
-        origin_account.hashed_pasword = in_hash_password
-        origin_account.admin_permisssion = permissions
-
+        origin_account.hashed_pasword = hashed_password
         self._session.commit()
