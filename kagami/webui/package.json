@@ -22,7 +22,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "xo && react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -44,6 +44,16 @@
     ]
   },
   "devDependencies": {
-    "@types/markdown-it": "^14.1.2"
+    "@types/markdown-it": "^14.1.2",
+    "xo": "^0.59.3"
+  },
+  "xo": {
+    "space": 2,
+    "rules": {
+      "no-unused-vars": "off",
+      "import/extensions": "off",
+      "n/file-extension-in-import": "off",
+      "unicorn/filename-case": "off"
+    }
   }
 }
