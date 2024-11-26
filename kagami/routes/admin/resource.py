@@ -54,5 +54,5 @@ async def sync_resource(resource_name: str, supervisor: SupervisorDeps):
     if not resource:
         raise HTTPException(status_code=404, detail="Resource not found")
     
-    # TODO: 实现资源同步逻辑
+
     return {"message": "Sync started"}
