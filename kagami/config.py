@@ -10,4 +10,5 @@ class SupervisorConfig(BaseSettings):
     database_url: str = "change_me"
 
     class Config:
-        env_prefix = "KAGAMI_SUPERVISOR_"
+        env_prefix = "kagami_supervisor"
+        env_file = "config.env"
