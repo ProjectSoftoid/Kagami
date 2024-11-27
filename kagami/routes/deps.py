@@ -1,3 +1,4 @@
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from typing import Annotated
 
@@ -12,13 +13,12 @@ SupervisorDeps = Annotated[Supervisor, Depends(lambda: supervisor)]
 
 
 @asynccontextmanager
-async def some_async_generator():
-    session: AsyncSession
-    session = DatabaseEngine.session_factory
+async def session_generator() -> AsyncGenerator[AsyncSession]:
+    session: AsyncSession = DatabaseEngine.session_factory()
     try:
         yield session
     finally:
         await session.close()
 
 
-SessionDeps = Annotated[AsyncSession, Depends(some_async_generator)]
+SessionDeps = Annotated[AsyncSession, Depends(session_generator())]
