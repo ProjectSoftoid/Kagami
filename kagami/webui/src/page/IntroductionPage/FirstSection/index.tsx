@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link, useNavigate} from 'react-router-dom';
-import LogoImage from '../../../picture/logo.jpg';
-import WordImage from '../../../picture/word.jpg';
+import LogoImage from '../../../assets/logo.png';
+import WordImage from '../../../assets/word.png';
 import styles from './styles.module.scss';
 
 const Firstsection = () => {
