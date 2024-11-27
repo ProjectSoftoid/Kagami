@@ -15,7 +15,7 @@ supervisor = None
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global supervisor
-    supervisor = Supervisor  # TODO load the supervisor
+    supervisor = await Supervisor.load()
 
     # start gRPC server
     grpc_server = grpc.aio.server()

@@ -1,4 +1,5 @@
 import logging
+import asyncio
 
 import grpc
 
@@ -44,10 +45,26 @@ class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
 
         self.unregistered_worker = []
 
-    # TODO load config from database and configuration file
-    # @classmethod
-    # def load(self) -> "Supervisor":
-    #     return Supervisor()
+    @classmethod
+    async def load(self) -> "Supervisor":
+        """Load supervisor configuration from database and config file"""
+        # 从配置文件加载基本配置
+        config = load_config()
+        
+        # 从数据库加载worker和resource信息
+        async with get_db_session() as session:
+            worker_service = WorkerService(session)
+            resource_service = ResourceService(session)
+            
+            workers = await worker_service.get_all_workers()
+            resources = await resource_service.get_all_resources()
+            
+        return self(
+            supervisor_host=config.supervisor_host,
+            supervisor_port=config.supervisor_port,
+            worker_info_list=workers,
+            resource_info_list=resources
+        )
 
     """
     gRPC function
@@ -208,3 +225,64 @@ class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
     @staticmethod
     def _parse_address(host: str, port: int):
         return f"{host}:{port}"
+
+    async def get_announcement(self):
+        # 这里应该实现从数据库或缓存中获取最新公告的逻辑
+        # 临时返回一个示例公告
+        return Announcement(
+            content="Welcome to Kagami!",
+            timestamp=datetime.now()
+        )
+
+    async def sync_resource(self, resource_name: str):
+        """Sync resource across all providers"""
+        resource = self.resources.get(resource_name)
+        if not resource:
+            raise ValueError(f"Resource {resource_name} not found")
+        
+        sync_tasks = []
+        for provider in resource.providers:
+            task = self._sync_provider(provider)
+            sync_tasks.append(task)
+        
+        # 并行执行所有同步任务
+        results = await asyncio.gather(*sync_tasks, return_exceptions=True)
+        
+        # 处理同步结果
+        success_count = sum(1 for r in results if not isinstance(r, Exception))
+        return {
+            "total_providers": len(resource.providers),
+            "sync_success": success_count
+        }
+
+    async def _sync_provider(self, provider):
+        """Sync single provider"""
+        try:
+            async with self._create_channel(provider.worker_addr) as channel:
+                stub = worker_pb2_grpc.WorkerStub(channel)
+                request = worker_pb2.SyncRequest(
+                    replica_id=provider.replica_id
+                )
+                await stub.sync(request)
+                return True
+        except Exception as e:
+            logger.error(f"Failed to sync provider {provider.replica_id}: {e}")
+            raise
+
+    async def _create_channel(self, addr: str) -> grpc.aio.Channel:
+        """Create a secure gRPC channel"""
+        # 加载证书和密钥
+        with open('path/to/server.crt', 'rb') as f:
+            server_cert = f.read()
+        with open('path/to/server.key', 'rb') as f:
+            server_key = f.read()
+        
+        # 创建凭证
+        credentials = grpc.ssl_channel_credentials(
+            root_certificates=server_cert,
+            private_key=server_key,
+            certificate_chain=server_cert
+        )
+        
+        # 返回安全通道
+        return grpc.aio.secure_channel(addr, credentials)

@@ -1,11 +1,11 @@
-from fastapi import APIRouter, HTTPException, Body
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 import grpc
 
-from kagami.routes.deps import SupervisorDeps
-from kagami.proto.worker_pb2 import AddResourceRequest
-from kagami.proto.worker_pb2_grpc import WorkerStub
-from kagami.proto.worker_pb2 import ProviderInfo
+from ...database.database_service.worker_manager import WorkerService
+from ...routes.deps import SupervisorDeps
+from ...grpc.worker_pb2 import AddResourceRequest, ProviderInfo
+from kagami.grpc.worker_pb2_grpc import WorkerStub
 
 
 

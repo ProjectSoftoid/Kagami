@@ -187,3 +187,30 @@ class Worker(worker_pb2_grpc.WorkerServicer):
         # 实现创建provider的逻辑
         # 返回创建的provider实例
         pass
+
+    async def send_provider_infos(self):
+        """Send provider information to supervisor"""
+        try:
+            async with self._create_channel(self.supervisor_addr) as channel:
+                stub = supervisor_pb2_grpc.SupervisorStub(channel)
+                
+                providers = [
+                    supervisor_pb2.ProviderInfo(
+                        name=p.name,
+                        replica_id=p.replica_id,
+                        status=p.status.value,
+                        method=p.method
+                    )
+                    for p in self.providers.values()
+                ]
+                
+                request = supervisor_pb2.UpdateProvidersRequest(
+                    worker_addr=self.worker_addr,
+                    providers=providers
+                )
+                
+                await stub.update_providers(request)
+                logger.info("Successfully sent provider infos to supervisor")
+                
+        except Exception as e:
+            logger.error(f"Failed to send provider infos: {e}")
