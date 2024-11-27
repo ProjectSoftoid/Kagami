@@ -1,22 +1,22 @@
 import React from 'react';
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
-import Homepage from './page/Homepage/index.js';
-import Advertisementpage from './page/Advertisement/index.js';
-import Downloadpage from './page/Download/index.js';
-import Domainpage from './page/Domain/index.js';
-import Mirrorpage from './page/Mirror/index.js';
-import Statepage from './page/State/state.js';
+import HomePage from './page/HomePage/index.js';
+import AdvertisementPage from './page/Advertisement/index.js';
+import DownloadPage from './page/Download/index.js';
+import DomainPage from './page/Domain/index.js';
+import MirrorPage from './page/Mirror/index.js';
+import StatePage from './page/State/state.js';
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path='/' element={<Homepage />} />
-        <Route path='/announcement' element={<Advertisementpage />} />
-        <Route path='/download' element={<Downloadpage />} />"
-        <Route path='/domain' element={<Domainpage />} />
-        <Route path='/mirror' element={<Mirrorpage />} />
-        <Route path='/state' element={<Statepage />} />
+        <Route path='/' element={<HomePage />} />
+        <Route path='/announcement' element={<AdvertisementPage />} />
+        <Route path='/download' element={<DownloadPage />} />"
+        <Route path='/domain' element={<DomainPage />} />
+        <Route path='/mirror' element={<MirrorPage />} />
+        <Route path='/state' element={<StatePage />} />
       </Routes >
     </Router>
   );
