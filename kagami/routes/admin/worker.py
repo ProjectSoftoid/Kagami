@@ -1,5 +1,8 @@
 from fastapi import APIRouter, HTTPException
-from ...deps import SupervisorDeps
+
+from kagami.routes.deps import SupervisorDeps
+
+
 
 worker_router = APIRouter(prefix="/admin/worker")
 
@@ -11,7 +14,7 @@ async def list_workers(supervisor: SupervisorDeps):
         {
             "addr": addr,
             "providers": [p.name for p in worker.providers.values()],
-            "status": "online" if await supervisor.check_worker_health(addr) else "offline"
+            "status": worker.worker_status.value
         }
         for addr, worker in workers.items()
     ]
@@ -25,7 +28,7 @@ async def get_worker_detail(worker_addr: str, supervisor: SupervisorDeps):
     
     return {
         "addr": worker_addr,
-        "status": "online" if await supervisor.check_worker_health(worker_addr) else "offline",
+        "status": worker.worker_status.value,
         "providers": [
             {
                 "name": p.name,
@@ -39,5 +42,5 @@ async def get_worker_detail(worker_addr: str, supervisor: SupervisorDeps):
 @worker_router.post("/{worker_addr}/register")
 async def register_worker(worker_addr: str, supervisor: SupervisorDeps):
     """register worker"""
-    await supervisor.regiser_worker(worker_addr)
+    await supervisor.register_worker(worker_addr)
     return {"message": "Worker registered successfully"}

@@ -35,6 +35,8 @@ class Worker(worker_pb2_grpc.WorkerServicer):
         for provider in providers:
             self.providers[provider.name] = provider
 
+        self.registered = False
+
     """
     gRPC function
     sync_from_upstream()
