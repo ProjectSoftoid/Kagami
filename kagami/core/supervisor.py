@@ -7,6 +7,7 @@ from ...grpc.worker import worker_pb2, worker_pb2_grpc
 from .models import ResourceInfo, WorkerInfo
 from .models.provider_info import ProviderStatus
 from .models.resource_info import ResourceStatus
+from .models.worker_info import WorkerVerifyStatus
 
 logger = logging.getLogger(__name__)
 
@@ -84,23 +85,13 @@ class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
     """
 
     async def register_worker(self, worker_addr: str):
-        """Register worker with secure channel support"""
+        """Register worker with verification status"""
         if worker_addr in self.registered_workers:
             logger.warning(f"Worker already registered: {worker_addr}")
             return
             
-        # 创建安全通道的credentials
-        if self.config.tls_cert_path and self.config.tls_key_path:
-            creds = grpc.ssl_channel_credentials(
-                root_certificates=open(self.config.tls_ca_cert_path, 'rb').read() if self.config.tls_ca_cert_path else None,
-                private_key=open(self.config.tls_key_path, 'rb').read(),
-                certificate_chain=open(self.config.tls_cert_path, 'rb').read()
-            )
-            channel = grpc.aio.secure_channel(worker_addr, creds)
-        else:
-            channel = grpc.aio.insecure_channel(worker_addr)
-            
-        async with channel:
+        # 创建安全通道
+        async with self._create_channel(worker_addr) as channel:
             stub = worker_pb2_grpc.WorkerStub(channel)
             try:
                 # 发送注册确认
@@ -110,8 +101,12 @@ class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
                 # 创建WorkerInfo实例
                 worker_info = WorkerInfo(worker_addr)
                 
-                # 获取worker的provider信息
+                # 获取worker的provider信息并验证
                 provider_response = await stub.get_providers(worker_pb2.Empty())
+                if self._verify_worker_providers(provider_response.providers):
+                    worker_info.verify_status = WorkerVerifyStatus.VERIFIED
+                
+                # 保存provider信息
                 for provider in provider_response.providers:
                     provider_info = ProviderInfo(
                         name=provider.name,
@@ -130,7 +125,8 @@ class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
                     worker_service = WorkerService(session)
                     await worker_service.add_workerinfo(
                         address=worker_addr,
-                        reg_status=WorkerRegStatus.REGISTERED
+                        reg_status=WorkerRegStatus.REGISTERED,
+                        verify_status=worker_info.verify_status
                     )
                 
             except grpc.RpcError as e:
@@ -139,6 +135,12 @@ class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
                     status_code=500,
                     detail=f"Failed to register worker: {str(e)}"
                 )
+                
+    def _verify_worker_providers(self, providers: list) -> bool:
+        """验证worker的providers是否符合要求"""
+        # 实现具体的验证逻辑
+        # 例如：检查必需的provider是否存在，配置是否正确等
+        return True  # 临时返回True，需要根据实际需求实现验证逻辑
 
     """
     supervisor function

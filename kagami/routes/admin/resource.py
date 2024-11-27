@@ -1,34 +1,10 @@
-
-
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel, HttpUrl, field_validator
-from typing import Literal
-
+from pydantic import BaseModel
 from kagami.routes.deps import SupervisorDeps
 
 resource_router = APIRouter(prefix="/admin/resource")
 
-class ResourceConfig(BaseModel):
-    name: str
-    upstream_url: HttpUrl
-    provider_method: Literal["rsync", "git"]
-    retry: bool = True
-    
-    @field_validator('name')
-    def name_isvalid(self, v):
-        if not v.isalnum():
-            raise ValueError('name must be alphanumeric')
-        return v.lower()
-    
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "name": "ubuntu",
-                "upstream_url": "https://mirrors.ubuntu.com/",
-                "provider_method": "rsync",
-                "retry": True
-            }
-        }
+
 
 @resource_router.get("/list")
 async def list_resources(supervisor: SupervisorDeps):
@@ -73,41 +49,149 @@ async def sync_resource(resource_name: str, supervisor: SupervisorDeps):
 
     return {"message": "Sync started"}
 
-@resource_router.post("/create")
-async def create_resource(config: ResourceConfig, supervisor: SupervisorDeps):
-    """Create new resource"""
-    try:
-        # Pydantic自动验证输入数据
-        resource = await supervisor.create_resource(
-            name=config.name,
-            upstream_url=config.upstream_url,
-            provider_method=config.provider_method,
-            retry=config.retry
-        )
-        return {
-            "message": "Resource created successfully",
-            "resource": {
-                "name": resource.name,
-                "status": resource.status.value
-            }
-        }
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-@resource_router.put("/{resource_name}/config")
-async def update_resource_config(
-    resource_name: str, 
-    config: ResourceConfig, 
+@resource_router.post("/{worker_addr}/add_resource")
+async def add_resource(
+    worker_addr: str,
+    config: ResourceConfig,
     supervisor: SupervisorDeps
 ):
-    """Update resource configuration"""
+    """Add resource to worker"""
+    worker = supervisor.registered_workers.get(worker_addr)
+    if not worker:
+        raise HTTPException(status_code=404, detail="Worker not found")
+        
+    try:
+        async with supervisor._create_channel(worker_addr) as channel:
+            stub = worker_pb2_grpc.WorkerStub(channel)
+            
+            request = worker_pb2.AddResourceRequest(
+                name=config.name,
+                upstream_url=config.upstream_url,
+                provider_method=config.provider_method,
+                retry=config.retry
+            )
+            
+            response = await stub.add_resource(request)
+            if response.success:
+                return {
+                    "message": "Resource added successfully",
+                    "replica_id": response.replica_id
+                }
+            else:
+                raise HTTPException(
+                    status_code=400,
+                    detail=response.error_message
+                )
+                
+    except grpc.RpcError as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to add resource: {str(e)}"
+        )
+
+
+general_router = APIRouter()
+
+class Announcement(BaseModel):
+    content: str
+    timestamp: str
+
+@general_router.get("/announcement", response_model=Announcement)
+async def get_announcement(supervisor: SupervisorDeps):
+    """Get Announcement from supervisor"""
+    try:
+        announcement = await supervisor.get_announcement()
+        if announcement:
+            return Announcement(
+                content=announcement.content,
+                timestamp=announcement.timestamp.isoformat()
+            )
+        else:
+            return Announcement(content="No announcement at this time.", timestamp="")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to fetch announcement: {str(e)}")
+
+helper_router = APIRouter(prefix="/helper")
+
+@helper_router.get("/{resource_name}")
+async def get_helper(resource_name: str, supervisor: SupervisorDeps):
+    """Get helper information for a specific resource"""
+    try:
+        resource = supervisor.resources.get(resource_name)
+        if not resource:
+            raise HTTPException(
+                status_code=404, 
+                detail=f"Resource {resource_name} not found"
+            )
+            
+        # 获取资源的helper信息
+        helper_info = await supervisor.get_resource_helper(resource_name)
+        if not helper_info:
+            return {
+                "message": f"No helper information available for resource {resource_name}"
+            }
+            
+        return helper_info
+        
+    except Exception as e:
+        if isinstance(e, HTTPException):
+            raise e
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to get helper info: {str(e)}"
+        )
+
+@general_router.get("/resource_info")
+async def get_resource_info(supervisor: SupervisorDeps):
+    """Fetch Resource from supervisor"""
+    try:
+        resources = await supervisor.list_resource()
+        return [
+            {
+                "name": name,
+                "status": resource.status.value,
+                "providers": [
+                    {
+                        "id": provider.replica_id,
+                        "worker": provider.worker_addr,
+                        "status": provider.provider_status.value,
+                        "method": provider.provider_method
+                    }
+                    for provider in resource.providers
+                ]
+            }
+            for name, resource in resources.items()
+        ]
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to fetch resource info: {str(e)}"
+        )
+
+@general_router.get("/resource_detail/{resource_name}")
+async def get_resource_detail(resource_name: str, supervisor: SupervisorDeps):
+    """Show resource detail"""
     resource = supervisor.resources.get(resource_name)
     if not resource:
-        raise HTTPException(status_code=404, detail="Resource not found")
+        raise HTTPException(
+            status_code=404, 
+            detail=f"Resource {resource_name} not found"
+        )
     
-    try:
-        # Pydantic自动验证更新的配置
-        await supervisor.update_resource_config(resource_name, config.dict())
-        return {"message": "Resource configuration updated"}
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    return {
+        "name": resource_name,
+        "status": resource.status.value,
+        "providers": [
+            {
+                "id": provider.replica_id,
+                "worker": provider.worker_addr,
+                "status": provider.provider_status.value,
+                "method": provider.provider_method
+            }
+            for provider in resource.providers
+        ],
+        "worker_names": [
+            provider.worker_addr
+            for provider in resource.providers
+        ]
+    }

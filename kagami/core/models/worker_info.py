@@ -13,6 +13,11 @@ class WorkerStatus(Enum):
     ERROR = "error"
 
 
+class WorkerVerifyStatus(Enum):
+    VERIFIED = "Verified"
+    UNVERIFIED = "Unverified"
+
+
 class WorkerInfo:
     """
     WorkerInfo
@@ -29,11 +34,13 @@ class WorkerInfo:
 
     worker_addr: str
     worker_status: WorkerStatus
+    verify_status: WorkerVerifyStatus
     providers: dict[str, ProviderInfo]  # name -> ProviderInfo
 
     def __init__(self, worker_addr: str):
         self.worker_addr = worker_addr
         self.worker_status = WorkerStatus.ONLINE
+        self.verify_status = WorkerVerifyStatus.UNVERIFIED
         self.providers = {}
 
     def get_provider_by_name(self, name: str) -> ProviderInfo | None:

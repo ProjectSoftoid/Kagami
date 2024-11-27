@@ -7,6 +7,7 @@ service Worker {
     rpc register_accepted (RegisterResponse) returns (RegisterAck);
     rpc health_check (HealthCheckRequest) returns (HealthCheckResponse);
     rpc get_providers (google.protobuf.Empty) returns (ProvidersResponse);
+    rpc add_resource (AddResourceRequest) returns (AddResourceResponse);
 }
 
 message SyncRequest {
@@ -44,4 +45,17 @@ message ProviderInfo {
 
 message ProvidersResponse {
     repeated ProviderInfo providers = 1;
+}
+
+message AddResourceRequest {
+    string name = 1;
+    string upstream_url = 2;
+    string provider_method = 3;
+    bool retry = 4;
+}
+
+message AddResourceResponse {
+    bool success = 1;
+    string error_message = 2;
+    int32 replica_id = 3;
 }

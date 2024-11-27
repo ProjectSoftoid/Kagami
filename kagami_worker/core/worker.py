@@ -67,12 +67,15 @@ class Worker(worker_pb2_grpc.WorkerServicer):
     Callback function for register request was accepted by supervisor.
     """
 
-    async def register_accepted(self, request, context):
-        accepted = request.accepted
-        if accepted:
+    async def register_accepted(self, request: worker_pb2.RegisterResponse, context):
+        """Handle registration acceptance from supervisor"""
+        if request.accepted:
             self.registered = True
-            message = "Worker Registered"
-        return worker_pb2.RegisterAck(message=message)
+            logger.info(f"Registration accepted by supervisor: {self.supervisor_addr}")
+            return worker_pb2.RegisterAck(message="Registration acknowledged")
+        else:
+            logger.error("Registration rejected by supervisor")
+            return worker_pb2.RegisterAck(message="Registration rejected")
 
     """
     gRPC function
@@ -166,3 +169,21 @@ class Worker(worker_pb2_grpc.WorkerServicer):
     @staticmethod
     def _parse_address(host: str, port: int):
         return f"{host}:{port}"
+
+    async def add_resource(self, request: worker_pb2.AddResourceRequest, context):
+        try:
+            new_provider = self._create_provider(
+                name=request.name,
+                upstream_url=request.upstream_url,
+                provider_method=request.provider_method,
+                retry=request.retry
+            )
+            self.providers[request.name] = new_provider
+            return worker_pb2.AddResourceResponse(success=True, replica_id=new_provider.replica_id)
+        except Exception as e:
+            return worker_pb2.AddResourceResponse(success=False, error_message=str(e))
+
+    def _create_provider(self, name, upstream_url, provider_method, retry):
+        # 实现创建provider的逻辑
+        # 返回创建的provider实例
+        pass
