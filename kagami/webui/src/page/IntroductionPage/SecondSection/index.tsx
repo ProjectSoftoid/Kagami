@@ -1,6 +1,6 @@
 import {type FC} from 'react';
-import logo from '../../picture/logo.jpg';
-import name from '../../picture/word.jpg';
+import logo from '../../../picture/logo.jpg';
+import name from '../../../picture/word.jpg';
 import styles from './styles.module.scss';
 
 const Secondsection: FC = () => (
