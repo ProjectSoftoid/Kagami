@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import logo from '../../../picture/kagami.jpg';
+import logo from '../../../assets/kagami.png';
 import styles from './styles.module.scss';
 
 type Domain = {
