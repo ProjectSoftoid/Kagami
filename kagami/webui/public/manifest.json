@@ -8,12 +8,12 @@
       "type": "image/x-icon"
     },
     {
-      "src": "kagami.jpg",
+      "src": "kagami.png",
       "type": "image/jpg",
       "sizes": "192x192"
     },
     {
-      "src": "kagami.jpg",
+      "src": "kagami.png",
       "type": "image/jpg",
       "sizes": "512x512"
     }
