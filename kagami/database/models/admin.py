@@ -14,6 +14,7 @@ class AdminPermissions(enum.Enum):
 
 class Admin(BaseModel):
     __tablename__ = "admin"
+
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(64))
     hashed_password: Mapped[str] = mapped_column(String(255))
