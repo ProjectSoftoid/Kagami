@@ -6,6 +6,7 @@ service Worker {
     rpc sync_from_upstream (SyncRequest) returns (SyncResponse);
     rpc register_accepted (RegisterResponse) returns (RegisterAck);
     rpc health_check (HealthCheckRequest) returns (HealthCheckResponse);
+    rpc get_providers (google.protobuf.Empty) returns (ProvidersResponse);
 }
 
 message SyncRequest {
@@ -31,4 +32,16 @@ message HealthCheckRequest {
 
 message HealthCheckResponse {
     string worker_addr = 1;
+}
+
+message ProviderInfo {
+    string name = 1;
+    int32 replica_id = 2;
+    string upstream_url = 3;
+    string provider_method = 4;
+    string status = 5;
+}
+
+message ProvidersResponse {
+    repeated ProviderInfo providers = 1;
 }
