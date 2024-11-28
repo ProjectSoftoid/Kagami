@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import logo from '../../../assets/kagami.png';
 import styles from './styles.module.scss';
 
-const Domainsection: React.FC = () => {
+const DomainSection: React.FC = () => {
   const [domain, setDomain] = useState<Domain | undefined>(undefined);
 
   useEffect(() => {
@@ -33,4 +33,4 @@ const Domainsection: React.FC = () => {
   );
 };
 
-export default Domainsection;
+export default DomainSection;
