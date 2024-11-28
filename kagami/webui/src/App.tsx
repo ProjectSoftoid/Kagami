@@ -1,7 +1,7 @@
 import React from 'react';
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import HomePage from './page/HomePage/index.js';
-import AdvertisementPage from './page/Advertisement/index.js';
+import AnnouncementPage from './page/Announcement/index.js';
 import DownloadPage from './page/Download/index.js';
 import DomainPage from './page/Domain/index.js';
 import MirrorPage from './page/Mirror/index.js';
@@ -12,7 +12,7 @@ function App() {
     <Router>
       <Routes>
         <Route path='/' element={<HomePage />} />
-        <Route path='/announcement' element={<AdvertisementPage />} />
+        <Route path='/announcement' element={<AnnouncementPage />} />
         <Route path='/download' element={<DownloadPage />} />"
         <Route path='/domain' element={<DomainPage />} />
         <Route path='/mirror' element={<MirrorPage />} />

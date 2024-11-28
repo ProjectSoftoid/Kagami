@@ -1,0 +1,85 @@
+.ListSection {
+    margin: 20px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column; /* 垂直排列 */
+    align-items: center; /* 居中对齐 */
+  }
+  .searchContainer{
+      display: flex;
+      justify-content: center; // 水平居中
+      align-items: center; // 垂直居中
+      margin-top: 10px; // 减小顶部间距
+      width:100%;
+  }
+  .searchInput {
+    width: 76%; /* 搜索框宽度占满父容器 */
+    padding: 10px;
+    margin-bottom: 20px; /* 搜索框和列表的间距 */
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    &:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
+  }
+
+  .bottom {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%; /* 列表宽度占满父容器 */
+    max-width: 800px; /* 限制最大宽度 */
+  }
+
+  .resourceBox {
+    display: flex;
+    justify-content: space-between; /* 左右两端对齐 */
+    align-items: center; /* 垂直居中 */
+    padding: 10px;
+    margin: 5px 0;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: #f0f0f0;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  .left {
+    display: flex; /* 名称和问号在一行 */
+    align-items: center;
+  }
+
+  .name {
+    font-size: 1rem;
+    color: #333;
+    margin-right: 5px; /* 间距 */
+  }
+
+  .helperLink {
+    font-size: 0.9rem;
+    color: #007bff;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .status {
+    font-size: 0.9rem;
+    color: #555;
+    text-align: right; /* 对齐右侧 */
+  }
