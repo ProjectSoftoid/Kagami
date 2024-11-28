@@ -2,14 +2,7 @@ import React, {useEffect, useState} from 'react';
 import logo from '../../../assets/kagami.png';
 import styles from './styles.module.scss';
 
-type Domain = {
-  id: number;
-  domain: {
-    auto: string;
-    IPv4: string;
-    IPv6: string;
-  };
-};
+
 
 const Domainsection: React.FC = () => {
   const [domain, setDomain] = useState<Domain | undefined>(undefined);
