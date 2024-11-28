@@ -1,8 +1,21 @@
 import logging
+from enum import Enum
 
 from .provider_info import ProviderInfo
 
 logger = logging.getLogger(__name__)
+
+
+class WorkerStatus(Enum):
+    ONLINE = "online"
+    OFFLINE = "offline"
+    MAINTENANCE = "maintenance"
+    ERROR = "error"
+
+
+class WorkerVerifyStatus(Enum):
+    VERIFIED = "Verified"
+    UNVERIFIED = "Unverified"
 
 
 class WorkerInfo:
@@ -20,7 +33,15 @@ class WorkerInfo:
     """
 
     worker_addr: str
+    worker_status: WorkerStatus
+    verify_status: WorkerVerifyStatus
     providers: dict[str, ProviderInfo]  # name -> ProviderInfo
+
+    def __init__(self, worker_addr: str):
+        self.worker_addr = worker_addr
+        self.worker_status = WorkerStatus.ONLINE
+        self.verify_status = WorkerVerifyStatus.UNVERIFIED
+        self.providers = {}
 
     def get_provider_by_name(self, name: str) -> ProviderInfo | None:
         provider = self.providers.get(name)
