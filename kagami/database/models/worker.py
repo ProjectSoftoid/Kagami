@@ -11,18 +11,10 @@ class WorkerRegStatus(enum.Enum):
     REGISTERED = "registered"
 
 
-class WorkerVerifyStatus(enum.Enum):
-    VERIFIED = "Verified"
-    UNVERIFIED = "Unverified"
-
-
 class Worker(BaseModel):
     __tablename__ = "worker_info"
 
     worker_addr: Mapped[str] = mapped_column(String(64), primary_key=True)
     worker_reg_status: Mapped[WorkerRegStatus] = mapped_column(
         Enum(WorkerRegStatus), comment="record whether a worker is registered"
-    )
-    worker_verify_status: Mapped[WorkerVerifyStatus] = mapped_column(
-        Enum(WorkerVerifyStatus), comment="record whether a worker is verified"
     )

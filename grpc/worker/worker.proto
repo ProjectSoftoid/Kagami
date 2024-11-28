@@ -47,15 +47,5 @@ message ProvidersResponse {
     repeated ProviderInfo providers = 1;
 }
 
-message AddResourceRequest {
-    string name = 1;
-    string upstream_url = 2;
-    string provider_method = 3;
-    bool retry = 4;
-}
 
-message AddResourceResponse {
-    bool success = 1;
-    string error_message = 2;
-    int32 replica_id = 3;
 }
