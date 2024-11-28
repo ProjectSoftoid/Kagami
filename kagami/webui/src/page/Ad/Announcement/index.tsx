@@ -1,9 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import MarkdownIt from 'markdown-it';
+import { getAnnouncements, type Announcement } from '../../../api/announcement';
 import styles from './styles.module.scss';
-import { getAnnouncements, Announcement } from '../../../api/announcement';
 // 安装 @types/markdown-it 后，可以导入类型
-
 
 const md = new MarkdownIt();
 
@@ -19,6 +18,7 @@ const AdSection: React.FC = () => {
         console.error('加载失败公告:', error);
       }
     };
+
     fetchAnnouncement();
   }, []);
 

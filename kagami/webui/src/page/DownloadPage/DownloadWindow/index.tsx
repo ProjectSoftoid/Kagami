@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './styles.module.scss';
 
 type OperatingSystem = {
@@ -9,7 +9,7 @@ type OperatingSystem = {
   };
 };
 
-const Downsection: React.FC = () => {
+const DownloadSection: React.FC = () => {
   const [operatingSystems, setOperatingSystems] = useState<OperatingSystem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedName, setSelectedName] = useState<string>('');
@@ -95,4 +95,4 @@ const Downsection: React.FC = () => {
   );
 };
 
-export default Downsection;
+export default DownloadSection;

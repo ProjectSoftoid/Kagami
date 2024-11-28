@@ -1,9 +1,9 @@
 import React from 'react';
-import {Link, useNavigate} from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import FirstSection from '../IntroductionPage/FirstSection';
 import DownSection from '../DownloadPage/DownloadWindow';
 
-const Downloadpage = () => (
+const DownloadPage = () => (
   <div className='Downloadpage'>
     <FirstSection />
     <DownSection />
@@ -11,4 +11,4 @@ const Downloadpage = () => (
   </div>
 );
 
-export default Downloadpage;
+export default DownloadPage;

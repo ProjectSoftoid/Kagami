@@ -1,7 +1,7 @@
-import {type FC} from 'react';
+import { type FC } from 'react';
 import styles from './styles.module.scss';
 
-const Thirdsection: FC = () => (
+const ThirdSection: FC = () => (
   <div className={styles.Container}>
     <div className={styles.thirdSection}>
       <span className={styles.blog}>blog</span>
@@ -12,4 +12,4 @@ const Thirdsection: FC = () => (
     </div>
   </div>
 );
-export default Thirdsection;
+export default ThirdSection;

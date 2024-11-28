@@ -1,14 +1,14 @@
 import api from './api';
 
 // 定义公告数据的类型
-export interface Announcement {
+export type Announcement = {
   id: number;
   data: {
     title: string;
     content: string;
     date: string;
   };
-}
+};
 
 // 获取所有公告
 export const getAnnouncements = async (): Promise<Announcement[]> => {

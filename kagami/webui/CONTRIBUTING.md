@@ -2,7 +2,7 @@
 
 ## Code Linting
 
-We use [xo](https://github.com/xojs/xo) for linting. Please run `npm run lint` before committing your changes.
+We use [xo](https://github.com/xojs/xo) for linting. Please run `pnpm lint` before committing your changes.
 
 ### Basic Rules
 
