@@ -10,6 +10,7 @@
     "@types/node": "^22.10.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
+    "axios": "^1.7.8",
     "markdown-it": "^14.1.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -55,7 +56,12 @@
       "import/extensions": "off",
       "n/file-extension-in-import": "off",
       "unicorn/filename-case": "off",
-      "@typescript-eslint/no-unsafe-assignment": "off"
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/object-curly-spacing": ["error", "always"],
+      "@typescript-eslint/no-floating-promises": "warn",
+      "unicorn/prevent-abbreviations": "warn",
+      "@typescript-eslint/naming-convention": "off",
+      "@typescript-eslint/no-unsafe-return": "warn"
     }
   }
 }
