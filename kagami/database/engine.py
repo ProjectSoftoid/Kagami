@@ -9,7 +9,9 @@ class DatabaseEngine:
 
     @classmethod
     def init(cls):
-        cls._engine = create_async_engine(SupervisorConfig.database_url, echo=True)
+        cls._engine = create_async_engine(
+            SupervisorConfig.database_url, expire_on_commit=False
+        )
 
     @classmethod
     def session_factory(cls) -> AsyncSession:
