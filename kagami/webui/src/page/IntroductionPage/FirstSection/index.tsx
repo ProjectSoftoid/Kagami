@@ -1,10 +1,10 @@
 import React from 'react';
-import {Link, useNavigate} from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import LogoImage from '../../../assets/logo.png';
 import WordImage from '../../../assets/word.png';
 import styles from './styles.module.scss';
 
-const Firstsection = () => {
+const FirstSection = () => {
   const navigate = useNavigate();
 
   const handleAdClick = () => {
@@ -46,4 +46,4 @@ const Firstsection = () => {
   );
 };
 
-export default Firstsection;
+export default FirstSection;

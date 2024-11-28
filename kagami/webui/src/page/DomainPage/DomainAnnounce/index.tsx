@@ -1,8 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import logo from '../../../assets/kagami.png';
 import styles from './styles.module.scss';
-
-
 
 const Domainsection: React.FC = () => {
   const [domain, setDomain] = useState<Domain | undefined>(undefined);

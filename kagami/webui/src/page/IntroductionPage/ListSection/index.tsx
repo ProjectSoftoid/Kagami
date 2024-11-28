@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getResource, ResourceInfo } from '../../../api/resourceInfo';
+import { getResource, type ResourceInfo } from '../../../api/resourceInfo';
 import styles from './styles.module.scss';
 
 const ListSection: React.FC = () => {
@@ -18,13 +18,14 @@ const ListSection: React.FC = () => {
         console.error('加载资源失败:', error);
       }
     };
+
     fetchResource();
   }, []);
 
   // 根据搜索框输入实时过滤数据
   useEffect(() => {
-    const filtered = resource.filter((item) =>
-      item.name.toLowerCase().startsWith(searchQuery.toLowerCase())
+    const filtered = resource.filter(item =>
+      item.name.toLowerCase().startsWith(searchQuery.toLowerCase()),
     );
     setFilteredResource(filtered);
   }, [searchQuery, resource]);
@@ -33,17 +34,19 @@ const ListSection: React.FC = () => {
 
     <div className={styles.ListSection}>
       <div className={styles.searchContainer}>
-      <input
-        type="text"
-        placeholder="Searhing for Mirror...."
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        className={styles.searchInput}
-      />
+        <input
+          type='text'
+          placeholder='Searhing for Mirror....'
+          value={searchQuery}
+          onChange={e => {
+            setSearchQuery(e.target.value);
+          }}
+          className={styles.searchInput}
+        />
       </div>
       {filteredResource.length > 0 ? (
         <ul className={styles.bottom}>
-          {filteredResource.map((item) => (
+          {filteredResource.map(item => (
             <li key={item.name} className={styles.resourceBox}>
               {/* 左侧：资源名称和小问号 */}
               <div className={styles.left}>
@@ -52,7 +55,7 @@ const ListSection: React.FC = () => {
                   <a
                     href={`/helper/${item.name}`}
                     className={styles.helperLink}
-                    title="查看帮助"
+                    title='查看帮助'
                   >
                     ❓
                   </a>

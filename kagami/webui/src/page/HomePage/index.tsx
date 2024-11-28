@@ -1,10 +1,10 @@
 import React from 'react';
-import {Link, useNavigate} from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import FirstSection from '../IntroductionPage/FirstSection';
 import ListSection from '../IntroductionPage/ListSection';
 import ThirdSection from '../IntroductionPage/ThirdSection';
 
-const Homepage = () => {
+const HomePage = () => {
   const navigate = useNavigate();
 
   return (
@@ -16,4 +16,4 @@ const Homepage = () => {
   );
 };
 
-export default Homepage;
+export default HomePage;
