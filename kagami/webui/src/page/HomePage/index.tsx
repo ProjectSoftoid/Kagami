@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import FirstSection from '../IntroductionPage/FirstSection';
-import SecondSection from '../IntroductionPage/SecondSection';
+import ListSection from '../IntroductionPage/ListSection';
 import ThirdSection from '../IntroductionPage/ThirdSection';
 
 const Homepage = () => {
@@ -10,7 +10,7 @@ const Homepage = () => {
   return (
     <div className='Homepage'>
       <FirstSection />
-      <SecondSection />
+      <ListSection />
       <ThirdSection />
     </div>
   );
