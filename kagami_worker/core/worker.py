@@ -35,8 +35,6 @@ class Worker(worker_pb2_grpc.WorkerServicer):
         for provider in providers:
             self.providers[provider.name] = provider
 
-        self.registered = False
-
     """
     gRPC function
     sync_from_upstream()
@@ -67,15 +65,12 @@ class Worker(worker_pb2_grpc.WorkerServicer):
     Callback function for register request was accepted by supervisor.
     """
 
-    async def register_accepted(self, request: worker_pb2.RegisterResponse, context):
-        """Handle registration acceptance from supervisor"""
-        if request.accepted:
+    async def register_accepted(self, request, context):
+        accepted = request.accepted
+        if accepted:
             self.registered = True
-            logger.info(f"Registration accepted by supervisor: {self.supervisor_addr}")
-            return worker_pb2.RegisterAck(message="Registration acknowledged")
-        else:
-            logger.error("Registration rejected by supervisor")
-            return worker_pb2.RegisterAck(message="Registration rejected")
+            message = "Worker Registered"
+        return worker_pb2.RegisterAck(message=message)
 
     """
     gRPC function
@@ -169,48 +164,3 @@ class Worker(worker_pb2_grpc.WorkerServicer):
     @staticmethod
     def _parse_address(host: str, port: int):
         return f"{host}:{port}"
-
-    async def add_resource(self, request: worker_pb2.AddResourceRequest, context):
-        try:
-            new_provider = self._create_provider(
-                name=request.name,
-                upstream_url=request.upstream_url,
-                provider_method=request.provider_method,
-                retry=request.retry
-            )
-            self.providers[request.name] = new_provider
-            return worker_pb2.AddResourceResponse(success=True, replica_id=new_provider.replica_id)
-        except Exception as e:
-            return worker_pb2.AddResourceResponse(success=False, error_message=str(e))
-
-    def _create_provider(self, name, upstream_url, provider_method, retry):
-        # 实现创建provider的逻辑
-        # 返回创建的provider实例
-        pass
-
-    async def send_provider_infos(self):
-        """Send provider information to supervisor"""
-        try:
-            async with self._create_channel(self.supervisor_addr) as channel:
-                stub = supervisor_pb2_grpc.SupervisorStub(channel)
-                
-                providers = [
-                    supervisor_pb2.ProviderInfo(
-                        name=p.name,
-                        replica_id=p.replica_id,
-                        status=p.status.value,
-                        method=p.method
-                    )
-                    for p in self.providers.values()
-                ]
-                
-                request = supervisor_pb2.UpdateProvidersRequest(
-                    worker_addr=self.worker_addr,
-                    providers=providers
-                )
-                
-                await stub.update_providers(request)
-                logger.info("Successfully sent provider infos to supervisor")
-                
-        except Exception as e:
-            logger.error(f"Failed to send provider infos: {e}")
