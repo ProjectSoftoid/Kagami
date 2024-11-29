@@ -1,3 +1,4 @@
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..models.worker import Worker, WorkerRegStatus
@@ -24,7 +25,7 @@ class WorkerService:
     async def delete_workerinfo(self, worker_addr: str):
         origin_worker = await self._get(worker_addr=worker_addr)
         self._session.delete(origin_worker)
-        self._session.commit()
+        await self._session.commit()
 
     async def update_workerinfo(
         self, worker_addr: str | None, reg_status: WorkerRegStatus | None
@@ -34,4 +35,7 @@ class WorkerService:
             origin_worker.worker_addr = worker_addr
         if reg_status:
             origin_worker.worker_reg_status = reg_status
-        self._session.commit()
+        await self._session.commit()
+
+    async def list_all_worker(self, worker_addr: str | None) -> list:
+        return await self._session.execute(select(Worker))
