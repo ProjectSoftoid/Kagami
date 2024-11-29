@@ -27,7 +27,7 @@ class AdminService:
     async def delete_admin(self, admin_id: int):
         origin_account = await self._get(admin_id)
         self._session.delete(origin_account)
-        self._session.commit()
+        await self._session.commit()
 
     async def update_admin(
         self,
