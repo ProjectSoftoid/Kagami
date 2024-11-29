@@ -28,7 +28,6 @@ async def lifespan(app: FastAPI):
     logger.info(f"gRPC Port: {config.grpc_port}")
     logger.info(f"Log File: {config.log_file}")
     logger.info(f"Log Level: {config.log_level}")
-    logger.info(f"Database URL: {config.database_url}")
 
     # start gRPC server
     grpc_server = grpc.aio.server()
