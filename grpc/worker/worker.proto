@@ -6,10 +6,31 @@ service Worker {
     rpc sync_from_upstream (SyncRequest) returns (SyncResponse);
     rpc register_accepted (RegisterResponse) returns (RegisterAck);
     rpc health_check (HealthCheckRequest) returns (HealthCheckResponse);
+    rpc get_providers (GetProviderRequest) returns (GetProviderResponse);
+}
+
+message GetProviderRequest {
+    // if nothing provided, list all the providers.
+    optional string name = 1;
+}
+
+enum ProviderStatus {
+    INIT = 0;
+    SYNCING = 1;
+    SUCCESS = 2;
+    FAILED = 3;
+}
+
+message GetProviderResponse {
+    string name = 1;
+    int64 replica_id = 2;
+    string upstreamurl = 3;
+    ProviderStatus status = 4;
 }
 
 message SyncRequest {
-    string name = 1;
+    // if nothing provided, sync all the providers on a worker.
+    optional string name = 1;
 }
 
 message SyncResponse {
