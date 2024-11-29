@@ -49,6 +49,11 @@ class WorkerStub(object):
                 request_serializer=worker__pb2.HealthCheckRequest.SerializeToString,
                 response_deserializer=worker__pb2.HealthCheckResponse.FromString,
                 _registered_method=True)
+        self.get_providers = channel.unary_unary(
+                '/kagami_worker.Worker/get_providers',
+                request_serializer=worker__pb2.GetProviderRequest.SerializeToString,
+                response_deserializer=worker__pb2.GetProviderResponse.FromString,
+                _registered_method=True)
 
 
 class WorkerServicer(object):
@@ -72,6 +77,12 @@ class WorkerServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def get_providers(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_WorkerServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -89,6 +100,11 @@ def add_WorkerServicer_to_server(servicer, server):
                     servicer.health_check,
                     request_deserializer=worker__pb2.HealthCheckRequest.FromString,
                     response_serializer=worker__pb2.HealthCheckResponse.SerializeToString,
+            ),
+            'get_providers': grpc.unary_unary_rpc_method_handler(
+                    servicer.get_providers,
+                    request_deserializer=worker__pb2.GetProviderRequest.FromString,
+                    response_serializer=worker__pb2.GetProviderResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -172,6 +188,33 @@ class Worker(object):
             '/kagami_worker.Worker/health_check',
             worker__pb2.HealthCheckRequest.SerializeToString,
             worker__pb2.HealthCheckResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def get_providers(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/kagami_worker.Worker/get_providers',
+            worker__pb2.GetProviderRequest.SerializeToString,
+            worker__pb2.GetProviderResponse.FromString,
             options,
             channel_credentials,
             insecure,
