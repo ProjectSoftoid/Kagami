@@ -1,0 +1,20 @@
+.container {
+  padding: 16px;
+}
+
+.card {
+  background-color: #3d3d3d !important;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+
+  :global {
+    .ant-card-body {
+      padding: 12px;
+    }
+  }
+}
+
+.chart {
+  height: 300px;
+  width: 100%;
+}
