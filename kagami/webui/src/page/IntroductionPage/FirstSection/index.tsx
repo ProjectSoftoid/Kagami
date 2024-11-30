@@ -4,7 +4,7 @@ import LogoImage from '../../../assets/logo.png';
 import WordImage from '../../../assets/word.png';
 import styles from './styles.module.scss';
 
-const FirstSection = () => {
+const FirstSection = ({ showNav = true }: { showNav?: boolean }) => {
   const navigate = useNavigate();
 
   const handleAdClick = () => {
@@ -34,13 +34,15 @@ const FirstSection = () => {
           <img src={LogoImage} alt='logo' className={styles.logo} />
           <img src={WordImage} alt='word' className={styles.word} />
         </div>
-        <div className={styles.navLinks}>
-          <a onClick={handleMirrorClick} className={styles.mirror}>鏡像</a>
-          <a onClick={handleAdClick} className={styles.ad}>公告</a>
-          <a onClick={handleDownloadClick} className={styles.download}>下載</a>
-          <a onClick={handleDomainClick} className={styles.domain}>域名</a>
-          <a onClick={handleStateClick} className={styles.state}>狀態</a>
-        </div>
+        {showNav && (
+          <div className={styles.navLinks}>
+            <a onClick={handleMirrorClick} className={styles.mirror}>鏡像</a>
+            <a onClick={handleAdClick} className={styles.ad}>公告</a>
+            <a onClick={handleDownloadClick} className={styles.download}>下載</a>
+            <a onClick={handleDomainClick} className={styles.domain}>域名</a>
+            <a onClick={handleStateClick} className={styles.state}>狀態</a>
+          </div>
+        )}
       </div>
     </div>
   );
