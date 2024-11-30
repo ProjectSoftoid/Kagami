@@ -36,16 +36,16 @@ const UserManagement: React.FC = () => {
     try {
       const response = await getVisitStatistics();
       console.log('API Response:', JSON.stringify(response, null, 2));
-      if (response.code === 200) { 
-        setStatistics(response.data);
+      if (response.data.code === 200) { 
+        setStatistics(response.data.data);
         
-        const currentTime = new Date(response.data.timestamp);
+        const currentTime = new Date(response.data.data.timestamp);
         const timeStr = currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         
         setChartData(prev => {
           const newTimes = [...prev.times, timeStr];
-          const newActiveUsers = [...prev.activeUsers, response.data.metrics.active_users];
-          const newTraffic = [...prev.traffic, response.data.metrics.total_traffic];
+          const newActiveUsers = [...prev.activeUsers, response.data.data.metrics.active_users];
+          const newTraffic = [...prev.traffic, response.data.data.metrics.total_traffic];
           
           // Keep data for the last 24 hours (assuming 5-minute intervals)
           const maxPoints = (24 * 60) / 5; // 288 points for 24 hours

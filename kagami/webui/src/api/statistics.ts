@@ -1,4 +1,4 @@
-import { request } from '../utils/request';
+import request from './api';
 
 export interface Statistics {
   timestamp: string;
@@ -15,6 +15,10 @@ export interface ApiResponse<T> {
   data: T;
 }
 
+/**
+ * 获取访问统计数据
+ * @returns Promise<ApiResponse<Statistics>>
+ */
 export const getVisitStatistics = () => {
-  return request<ApiResponse<Statistics>>('/api/statistics/visits');
+  return request.get<ApiResponse<Statistics>>('/api/statistics/visits');
 };
