@@ -1,4 +1,4 @@
-import api from './api';
+import api, { ApiError } from './api';
 
 export interface AdminLoginRequest {
   username: string;
@@ -87,84 +87,59 @@ export interface AddProviderResponse {
   }
 }
 
-export const adminLogin = (data: AdminLoginRequest) => {
-  return api.post<AdminLoginResponse>('/admin/login', data);
+export const adminLogin = async (data: AdminLoginRequest): Promise<string> => {
+  const response = await api.post<AdminLoginResponse>('/admin/login', data);
+  return response.data.token;
 };
 
 export const getWorkerList = async (): Promise<Worker[]> => {
-  try {
-    const response = await api.get<WorkerListResponse>('/admin/worker/list');
-    if (response.data.code === 46) {
-      return response.data.data.workers;
-    }
-    throw new Error(response.data.message);
-  } catch (error) {
-    console.error('Failed to fetch workers:', error);
-    throw error;
+  const response = await api.get<WorkerListResponse>('/admin/worker/list');
+  if (response.data.code === 46) {
+    return response.data.data.workers;
   }
+  throw new ApiError(400, response.data.code.toString(), response.data.message);
 };
 
 // Accept a pending worker
 export const acceptWorker = async (address: string): Promise<Worker> => {
-  try {
-    const response = await api.post<AcceptWorkerResponse>('/admin/worker/accept', {
-      address,
-    });
-    if (response.data.code === 46) {
-      return response.data.data.worker;
-    }
-    throw new Error(response.data.message);
-  } catch (error) {
-    console.error('Failed to accept worker:', error);
-    throw error;
+  const response = await api.post<AcceptWorkerResponse>('/admin/worker/accept', {
+    address,
+  });
+  if (response.data.code === 46) {
+    return response.data.data.worker;
   }
+  throw new ApiError(400, response.data.code.toString(), response.data.message);
 };
 
 // Delete an existing worker
 export const deleteWorker = async (address: string): Promise<void> => {
-  try {
-    const response = await api.post<DeleteWorkerResponse>('/admin/worker/delete', {
-      address,
-    });
-    if (response.data.code !== 46) {
-      throw new Error(response.data.message);
-    }
-  } catch (error) {
-    console.error('Failed to delete worker:', error);
-    throw error;
+  const response = await api.post<DeleteWorkerResponse>('/admin/worker/delete', {
+    address,
+  });
+  if (response.data.code !== 46) {
+    throw new ApiError(400, response.data.code.toString(), response.data.message);
   }
 };
 
 // Get resources of a specific worker
 export const getWorkerResource = async (address: string): Promise<ResourceInfo[]> => {
-  try {
-    const response = await api.get<GetWorkerResourceResponse>(`/admin/worker/${address}/resource`);
-    // 检查响应状态和数据
-    if (response.data && response.data.data && response.data.data.resources) {
-      return response.data.data.resources;
-    }
-    // 如果响应格式不正确，抛出更具描述性的错误
-    throw new Error(`Invalid response format: ${JSON.stringify(response.data)}`);
-  } catch (error: any) {
-    // 添加更详细的错误日志
-    console.error('Failed to get worker resources:', {
-      error,
-      errorMessage: error.message,
-      errorResponse: error.response?.data
-    });
-    // 如果是服务器返回的错误消息，使用它；否则使用通用错误消息
-    const errorMessage = error.response?.data?.message || error.message || 'Failed to fetch worker resources';
-    throw new Error(errorMessage);
+  const response = await api.get<GetWorkerResourceResponse>(`/admin/worker/${address}/resource`);
+  if (response.data && response.data.data && response.data.data.resources) {
+    return response.data.data.resources;
   }
+  throw new ApiError(
+    400,
+    'INVALID_RESPONSE',
+    'Invalid response format from server',
+    response.data
+  );
 };
 
 // Add provider to a worker's resource
 export const addProvider = async (address: string, data: AddProviderRequest): Promise<ProviderInfo> => {
-  try {
-    const response = await api.post<AddProviderResponse>(`/admin/worker/${address}/add_provider`, data);
+  const response = await api.post<AddProviderResponse>(`/admin/worker/${address}/add_provider`, data);
+  if (response.data.code === 46) {
     return response.data.data.provider;
-  } catch (error) {
-    console.error('Failed to add provider:', error);
-    throw error;
   }
+  throw new ApiError(400, response.data.code.toString(), response.data.message);
 };

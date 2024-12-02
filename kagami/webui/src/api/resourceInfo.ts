@@ -1,4 +1,4 @@
-import api from './api';
+import api, { ApiError } from './api';
 
 export type ResourceInfo = {
   name: string;
@@ -7,21 +7,41 @@ export type ResourceInfo = {
 };
 
 export const getResource = async (): Promise<ResourceInfo[]> => {
-  try {
-    const response = await api.get('/resource_info');
-    return response.data;
-  } catch (error) {
-    console.error('获取公告失败:', error);
-    throw error;
+  const response = await api.get('/resource_info');
+  const data = response.data;
+
+  if (!Array.isArray(data)) {
+    throw new ApiError(400, 'INVALID_RESPONSE', 'Resource info data must be an array', data);
   }
+
+  // Validate each resource's data structure
+  for (const resource of data) {
+    if (!resource.name || typeof resource.name !== 'string' ||
+        !resource.status || typeof resource.status !== 'string' ||
+        typeof resource.helper !== 'boolean') {
+      throw new ApiError(400, 'INVALID_RESOURCE_DATA', 'Resource data is missing required fields or has invalid types', resource);
+    }
+  }
+
+  return data;
 };
 
-export const createAnnouncement = async (resource: ResourceInfo): Promise<ResourceInfo[]> => {
-  try {
-    const response = await api.post('/resource', resource);
-    return response.data;
-  } catch (error) {
-    console.error('创建公告失败:', error);
-    throw error;
+export const createResource = async (resource: ResourceInfo): Promise<ResourceInfo[]> => {
+  const response = await api.post('/resource', resource);
+  const data = response.data;
+
+  if (!Array.isArray(data)) {
+    throw new ApiError(400, 'INVALID_RESPONSE', 'Created resource response must be an array', data);
   }
+
+  // Validate each resource's data structure
+  for (const res of data) {
+    if (!res.name || typeof res.name !== 'string' ||
+        !res.status || typeof res.status !== 'string' ||
+        typeof res.helper !== 'boolean') {
+      throw new ApiError(400, 'INVALID_RESOURCE_DATA', 'Resource data is missing required fields or has invalid types', res);
+    }
+  }
+
+  return data;
 };
