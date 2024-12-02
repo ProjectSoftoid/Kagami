@@ -5,8 +5,7 @@ import WordImage from '../../../assets/word.png';
 import styles from './styles.module.scss';
 import  Modal from '../../DomainWindow';
 
-
-const FirstSection = () => {
+const FirstSection: React.FC<{ showNav?: boolean }> = ({ showNav = true }) => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false); // 弹窗状态
 
@@ -33,16 +32,18 @@ const FirstSection = () => {
   return (
     <div className={styles.Container}>
       <div className={styles.firstSection}>
-        <div className={styles.logoSection}>
+        <div className={styles.logoSection} onClick={() => navigate('/')}>
           <img src={LogoImage} alt='logo' className={styles.logo} />
           <img src={WordImage} alt='word' className={styles.word} />
         </div>
-        <div className={styles.navLinks}>
-          <a onClick={handleAdClick} className={styles.ad}>公告</a>
-          <a onClick={handleDownloadClick} className={styles.download}>下載</a>
-          <a onClick={handleDomainClick} className={styles.domain}>域名</a>
-          <a onClick={handleStateClick} className={styles.state}>狀態</a>
-        </div>
+        {showNav && (
+          <div className={styles.navLinks}>
+            <a onClick={handleAdClick} className={styles.ad}>公告</a>
+            <a onClick={handleDownloadClick} className={styles.download}>下載</a>
+            <a onClick={handleDomainClick} className={styles.domain}>域名</a>
+            <a onClick={handleStateClick} className={styles.state}>狀態</a>
+          </div>
+        )}
       </div>
 
       {/* 弹窗内容 */}

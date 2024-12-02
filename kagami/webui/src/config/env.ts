@@ -8,7 +8,7 @@ export const env = {
   // 判断当前环境
   isDev: import.meta.env.DEV,
   isProd: import.meta.env.PROD,
-} as const;
+  } as const;
 
 // 类型检查，确保必要的环境变量存在
 if (!env.api.baseURL) {
