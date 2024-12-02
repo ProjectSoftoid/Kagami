@@ -1,0 +1,107 @@
+.HelpPage {
+    display: flex;
+    height: 100vh;
+    margin-top: 2%;
+    margin-left: 6%;
+    margin-right: 6%;
+    overflow:hidden;
+    flex-wrap:wrap;
+  }
+
+  .sidebar {
+    height:80%;
+    width: 15%;
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+    overflow: auto;
+    margin-right: 2%;
+    border-radius: 15px;
+    box-sizing:border-box;
+  }
+
+  .content {
+    flex: 1;
+    background-color: #333;
+    padding: 20px;
+    border-radius: 15px;
+    width:70%;
+    display:flex;
+    flex-direction: column;
+    overflow-y: auto;
+
+  }
+  .textPart{
+  background-color: #444; /* Set background color for the textpart */
+  padding: 20px;
+  border-radius: 10px;
+  color: white; /* Optional: Set text color to white for better readability */
+  height:90vh;
+  overflow-y: auto;
+
+}
+.textPart h1 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.textPart p {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+.textPart ul {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin-bottom: 20px;
+}
+
+.textPart li {
+  margin-bottom: 10px;
+}
+
+.textPart code {
+  background-color: #666;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.textPart a {
+  color: #1e90ff;
+  text-decoration: none;
+}
+
+.textPart a:hover {
+  text-decoration: underline;
+}
+
+  .content h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+
+  .content p {
+    font-size: 1.2rem;
+  }
+  .name {
+    color:#fff;
+    margin-top: 8%;
+    overflow-y: auto;
+    text-decoration: none;
+  }
+  .Topline{
+    display: flex;
+  }
+  .Topline button{
+    color:grey;
+    border-radius: 15px;
+    width: 13%;
+    height:95%;
+    float:right;
+    cursor:pointer;
+    margin-bottom: 2%;
+    margin-left: 90%;
+    transition: background-color 0.3s, transform 0.1s;
+
+  }
