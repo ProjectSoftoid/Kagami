@@ -1,0 +1,153 @@
+.DetailPage {
+    display: flex;
+    height: 100vh;
+    margin-top: 2%;
+    margin-left: 6%;
+    margin-right: 6%;
+
+  }
+
+  .sidebar {
+    height:80%;
+    width: 20%;
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+    overflow: auto;
+    margin-right: 2%;
+    border-radius: 15px;
+    box-sizing:border-box;
+  }
+
+  .content {
+    flex: 1;
+    background-color: #333;
+    padding: 20px;
+    border-radius: 15px;
+    h1 {
+        font-size: 2rem;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #ddd;
+        padding-bottom: 10px;
+      }
+  }
+  .textPart{
+  background-color: #444; /* Set background color for the textpart */
+  padding: 20px;
+  border-radius: 10px;
+  color: white; /* Optional: Set text color to white for better readability */
+  height:90vh;
+  overflow-y: auto;
+  .description {
+    margin-top: 10px;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #333;
+
+    span {
+      font-weight: bold;
+      margin-right: 5px;
+    }
+  }
+  .url {
+    margin-top: 10px;
+    font-size: 1rem;
+    color: #f0f6fb;
+
+    a {
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+  .name {
+    color:#fff;
+    margin-top: 8%;
+    overflow-y: auto;
+    text-decoration: none;
+  }
+  .Topline{
+    display: flex;
+  }
+  .Topline button{
+    color:grey;
+    border-radius: 15px;
+    width: 13%;
+    height:95%;
+    float:right;
+    cursor:pointer;
+    margin-bottom: 2%;
+    margin-left: 90%;
+    transition: background-color 0.3s, transform 0.1s;
+
+  }
+  .workers {
+    margin-top: 20px;
+
+    h3 {
+      font-size: 1.4rem; /* 略微增大标题字体 */
+      margin-bottom: 15px;
+      color: #f2eded; /* 深色标题，稍微加强对比 */
+      border-bottom: 2px solid #ddd; /* 增加底部边框 */
+      padding-bottom: 5px; /* 标题下方的间距 */
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid #ddd; /* 为整个表格增加外边框 */
+      margin-top: 10px; /* 表格顶部间距 */
+
+      th,
+      td {
+        border: 1px solid #ddd; /* 单元格边框 */
+        padding: 12px; /* 增加单元格的内边距 */
+        text-align: left; /* 左对齐 */
+        font-size: 1rem; /* 统一字体大小 */
+      }
+
+      th {
+        background-color: #f7f7f7; /* 更浅的背景色 */
+        color: #333; /* 更深的文字颜色 */
+        font-weight: bold; /* 粗体显示表头 */
+        text-transform: uppercase; /* 表头文字全大写 */
+      }
+
+      td {
+        color: #555; /* 单元格文字颜色 */
+        vertical-align: middle; /* 垂直居中 */
+        font-size: 0.95rem; /* 略微减小单元格字体 */
+      }
+
+      tr{
+        background-color: #f7f7f7;
+      }
+
+      .status-active {
+        color: green;
+        font-weight: bold;
+      }
+
+      .status-inactive {
+        color: orange;
+        font-weight: bold;
+      }
+
+      .status-error {
+        color: red;
+        font-weight: bold;
+      }
+    }
+
+    .emptyMessage {
+      text-align: center;
+      color: #999;
+      font-size: 1rem;
+      margin-top: 20px;
+      font-style: italic; /* 斜体显示空状态消息 */
+    }
+  }
