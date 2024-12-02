@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getResource, type ResourceInfo } from '../../../api/resourceInfo';
 import styles from './styles.module.scss';
+import { Link } from 'react-router-dom';
 
 const ListSection: React.FC = () => {
   const [resource, setResource] = useState<ResourceInfo[]>([]); // 原始数据
@@ -50,7 +51,9 @@ const ListSection: React.FC = () => {
             <li key={item.name} className={styles.resourceBox}>
               {/* 左侧：资源名称和小问号 */}
               <div className={styles.left}>
+              <Link to={`/helper/${item.name}/detail`} className={styles.nameLink}>
                 <span className={styles.name}>{item.name}</span>
+              </Link>
                 {item.helper && (
                   <a
                     href={`/helper/${item.name}`}
