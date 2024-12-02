@@ -7,11 +7,17 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px;
+  padding: 10px 20px;
 
   .logoSection {
     display: flex;
     align-items: center;
+    cursor: pointer;
+    transition: opacity 0.3s;
+
+    &:hover {
+      opacity: 0.8;
+    }
 
     .logo {
       height: 50px;

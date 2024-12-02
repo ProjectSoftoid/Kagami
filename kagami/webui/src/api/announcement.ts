@@ -1,4 +1,4 @@
-import api from './api';
+import api, { ApiError } from './api';
 
 // 定义公告数据的类型
 export type Announcement = {
@@ -12,22 +12,18 @@ export type Announcement = {
 
 // 获取所有公告
 export const getAnnouncements = async (): Promise<Announcement[]> => {
-  try {
-    const response = await api.get('/announcement');
-    return response.data;
-  } catch (error) {
-    console.error('获取公告失败:', error);
-    throw error;
+  const response = await api.get('/announcement');
+  if (!Array.isArray(response.data)) {
+    throw new ApiError(400, 'INVALID_RESPONSE', 'Invalid announcement data format', response.data);
   }
+  return response.data;
 };
 
 // 创建公告
 export const createAnnouncement = async (announcement: Announcement): Promise<Announcement> => {
-  try {
-    const response = await api.post('/announcement', announcement);
-    return response.data;
-  } catch (error) {
-    console.error('创建公告失败:', error);
-    throw error;
+  const response = await api.post('/announcement', announcement);
+  if (!response.data || !response.data.id) {
+    throw new ApiError(400, 'INVALID_RESPONSE', 'Invalid created announcement data', response.data);
   }
+  return response.data;
 };
