@@ -2,11 +2,9 @@ import logging
 
 import grpc
 
-from ...grpc.supervisor import supervisor_pb2, supervisor_pb2_grpc
-from ...grpc.worker import worker_pb2, worker_pb2_grpc
-
 # from ..config import WorkerConfig
 from ..core.provider import BaseProvider
+from ..grpc import supervisor_pb2, supervisor_pb2_grpc, worker_pb2, worker_pb2_grpc
 
 logger = logging.getLogger(__name__)
 
@@ -128,22 +126,23 @@ class Worker(worker_pb2_grpc.WorkerServicer):
     async def update_provider_status(self, name: str):
         logger.info(f"Update provider status for {name}")
         provider = self.get_provider(name)
-        assert provider is not None
+        provider_status = provider.provider_status.value if provider else None
+        replica_id = provider.replica_id if provider else None
         # TODO secure channel
         async with grpc.aio.insecure_channel(self.supervisor_addr) as channel:
             stub = supervisor_pb2_grpc.SupervisorStub(channel=channel)
             request = supervisor_pb2.UpdateProviderRequest(
-                provider_replica_id=provider.replica_id,
-                provider_status=provider.provider_status,
+                provider_replica_id=replica_id,
+                provider_status=provider_status,
             )
             try:
                 # send update_provider_status request with gRPC
                 response = stub.update_provider_status(request)
-                logger.info(f"Provider: {provider.name} sent update status")
+                logger.info(f"Provider: {name} sent update status")
                 logger.debug(f"Response: {response}")
             except grpc.RpcError as e:
                 logger.exception(
-                    f"Failed to send update for provider: {provider.name}: {e}"
+                    f"Failed to send update for provider: {name}: {e}"
                 )
 
     """
