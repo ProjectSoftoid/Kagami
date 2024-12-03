@@ -3,8 +3,7 @@ import logging
 # from sqlalchemy import select
 import grpc
 
-from ...grpc.supervisor import supervisor_pb2_grpc
-from ...grpc.worker import worker_pb2, worker_pb2_grpc
+from ..grpc import supervisor_pb2_grpc, worker_pb2, worker_pb2_grpc
 
 # from ..config import SupervisorConfig
 # from ..database.database_service import WorkerService
@@ -148,7 +147,7 @@ class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
             except AssertionError as ae:
                 logger.exception(
                     f"Worker Address not the same: {worker_addr}:"
-                    f"{request.worker_addr}, {ae}"
+                    f"{response.worker_addr}, {ae}"
                 )
 
     """

@@ -5,9 +5,9 @@ from fastapi import FastAPI
 
 import grpc
 
-from ..grpc.supervisor import supervisor_pb2_grpc
 from .config import SupervisorConfig
 from .core import Supervisor
+from .grpc import supervisor_pb2_grpc
 from .routes import resource_router
 
 config = SupervisorConfig()
@@ -41,10 +41,3 @@ async def lifespan(app: FastAPI):
 
 kagami_server.router.lifespan = lifespan
 kagami_server.include_router(resource_router)
-
-if __name__ == "__main__":
-    import uvicorn
-
-    uvicorn.run(
-        app=kagami_server, host=config.supervisor_host, port=config.supervisor_port
-    )
