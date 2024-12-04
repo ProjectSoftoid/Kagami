@@ -5,25 +5,26 @@ from fastapi import FastAPI
 
 import grpc
 
-from .config import SupervisorConfig
+from .config import get_configs
 from .core import Supervisor
 from .grpc import supervisor_pb2_grpc
-from .routes import resource_router
 
-config = SupervisorConfig()
-logging.basicConfig(filename=config.log_file, level=config.log_level)
-logger = logging.getLogger(__name__)
-
-kagami_server = FastAPI()
+config = get_configs()
+logger = logging.getLogger("uvicorn.error")
 supervisor = None
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global supervisor
-    supervisor = Supervisor  # TODO load the supervisor
+    supervisor = Supervisor(
+        supervisor_host=config.grpc_host,
+        supervisor_port=config.grpc_port,
+        worker_info_list=[],
+    )  # TODO load the supervisor from database
 
-    logger.info("Reading config from config.env")
+    logger.info(f"HTTP Host: {config.http_host}")
+    logger.info(f"HTTP Port: {config.http_port}")
     logger.info(f"gRPC Host: {config.grpc_host}")
     logger.info(f"gRPC Port: {config.grpc_port}")
     logger.info(f"Log File: {config.log_file}")
@@ -36,8 +37,12 @@ async def lifespan(app: FastAPI):
     await grpc_server.start()
 
     yield
-    await grpc_server.stop()
+    await grpc_server.stop(0)
 
 
-kagami_server.router.lifespan = lifespan
+kagami_server = FastAPI(lifespan=lifespan)
+
+from .routes import resource_router  # noqa: E402
+
+# Include Router Area
 kagami_server.include_router(resource_router)

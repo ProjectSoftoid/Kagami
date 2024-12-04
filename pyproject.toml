@@ -16,6 +16,7 @@ starlette = "^0.41.2"
 bcrypt = "^4.2.1"
 uvicorn = "^0.32.1"
 protoletariat = "^3.3.2"
+python-dotenv = "^1.0.1"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.6.8"
