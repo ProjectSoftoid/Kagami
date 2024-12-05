@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import FirstSection from '../IntroductionPage/FirstSection';
-import AdSection from '../Ad/Announcement/index.js';
+import AdSection from './AnMainPage/index';
 import Thirdsection from '../IntroductionPage/ThirdSection';
 
 const Advertisementpage = () => (

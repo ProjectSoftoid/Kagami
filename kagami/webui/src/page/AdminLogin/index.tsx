@@ -11,12 +11,12 @@ const AdminLogin: React.FC = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await adminLogin({
+      const token = await adminLogin({
         username,
         password,
       });
       
-      localStorage.setItem('admin_token', response.data.token);
+      localStorage.setItem('admin_token', token);
       navigate('/admin/dashboard');
     } catch (error) {
       console.error('Login failed:', error);

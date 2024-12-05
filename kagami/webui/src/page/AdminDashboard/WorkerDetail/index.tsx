@@ -236,22 +236,25 @@ const WorkerDetail: React.FC = () => {
             </div>
 
             <div className={styles.infoCard}>
-              <h3>Mirror Resources</h3>
+              <div className={styles.resourceHeader}>
+                <h3>Mirror Resources</h3>
+                <div className={styles.resourceHeaderActions}>
+                  <button 
+                    className={styles.resourceButton}
+                    onClick={() => {
+                      setShowAddModal(true);
+                    }}
+                  >
+                    Add provider
+                  </button>
+                </div>
+              </div>
               <div className={styles.resourcesGrid}>
                 {resources.map((resource, index) => (
                   <div key={index} className={styles.resourceCard}>
                     <div className={styles.resourceHeader}>
                       <h4>{resource.name}</h4>
                       <div className={styles.resourceHeaderActions}>
-                        <button 
-                          className={styles.resourceButton}
-                          onClick={() => {
-                            setSelectedResource(resource.name);
-                            setShowAddModal(true);
-                          }}
-                        >
-                          Add provider
-                        </button>
                         <span className={`${styles.status} ${styles[resource.status]}`}>
                           {resource.status}
                         </span>
@@ -289,8 +292,23 @@ const WorkerDetail: React.FC = () => {
         {showAddModal && (
           <div className={styles.modal}>
             <div className={styles.modalContent}>
-              <h3>Add Provider for {selectedResource}</h3>
+              <h3>Add Provider</h3>
               <div className={styles.resourceForm}>
+                <div className={styles.formGroup}>
+                  <label>Select Resource:</label>
+                  <select
+                    value={selectedResource}
+                    onChange={(e) => setSelectedResource(e.target.value)}
+                    className={styles.select}
+                  >
+                    <option value="">Select a resource</option>
+                    {resources.map((resource, index) => (
+                      <option key={index} value={resource.name}>
+                        {resource.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
                 <div className={styles.formGroup}>
                   <label>Provider Name:</label>
                   <input
