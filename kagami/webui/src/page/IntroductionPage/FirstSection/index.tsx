@@ -31,20 +31,20 @@ const FirstSection: React.FC<{ showNav?: boolean }> = ({ showNav = true }) => {
   fetchDomain();
 }, []);
   useEffect(() =>{
-    const fetchDownload = async (resourceName:string) => {
+    const fetchDownload = async () => {
       try {
-        const data =await getDownloadList(resourceName);
+        const data =await getDownloadList();
         console.log('获取的下载:', data);
-        setDownload(data);
+        setDownloads(data);
       }catch (err){
         console.error('加载下载失败:', err);
 
     }
   };
-  if(resource_name){
-  fetchDownload(resource_name);
+
+  fetchDownload();
   }
-}, [resource_name]);
+, []);
 
   const handleAdClick = () => {
     navigate('/announcement');
@@ -89,11 +89,11 @@ const FirstSection: React.FC<{ showNav?: boolean }> = ({ showNav = true }) => {
       {/* 弹窗内容 */}
       <Modal1 isOpen={isModalOpen} onClose={closeModal}>
   <div className={styles.DomainSection}>
-    <h2>域名选择</h2>
+    <h2>域名選擇</h2>
     {domain ? (
       <ul>
         <li className={styles.domainItem}>
-          <strong>自动选择:</strong> {domain.autoSelect_ip}
+          <strong>自動選擇:</strong> {domain.autoSelect_ip}
         </li>
         <li className={styles.domainItem}>
           <strong>IPv4:</strong> {domain.ipv4}
