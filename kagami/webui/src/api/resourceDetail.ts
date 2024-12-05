@@ -19,7 +19,7 @@ export type ResourceDetail = {
 };
 
 export const getResourceDetail = async (resource_name: string): Promise<ResourceDetail> => {
-    const response = await api.get(`/resource_detail/${resource_name}`);
+    const response = await api.get(`/resource/${resource_name}`);
     const data = response.data;
 
     // Validate the response data structure
@@ -39,9 +39,9 @@ export const getResourceDetail = async (resource_name: string): Promise<Resource
 
     // Validate each worker's data structure
     for (const worker of data.workers) {
-        if (!worker.name || 
-            typeof worker.replica_id !== 'number' || 
-            !worker.provider_method || 
+        if (!worker.name ||
+            typeof worker.replica_id !== 'number' ||
+            !worker.provider_method ||
             !Object.values(Resourcestatus).includes(worker.status)) {
             throw new ApiError(400, 'INVALID_WORKER_DATA', 'Worker data is invalid or missing required fields', worker);
         }

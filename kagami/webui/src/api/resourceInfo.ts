@@ -7,7 +7,7 @@ export type ResourceInfo = {
 };
 
 export const getResource = async (): Promise<ResourceInfo[]> => {
-  const response = await api.get('/resource_info');
+  const response = await api.get('/resource/info');
   const data = response.data;
 
   if (!Array.isArray(data)) {
