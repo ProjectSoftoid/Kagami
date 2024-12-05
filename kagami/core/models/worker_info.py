@@ -1,9 +1,13 @@
+import enum
 import logging
 
 from .provider_info import ProviderInfo
 
 logger = logging.getLogger(__name__)
 
+class WorkerStatus(enum.Enum):
+    CONNECTED = "connected"
+    DISCONNECTED = "disconnected"
 
 class WorkerInfo:
     """
@@ -20,6 +24,7 @@ class WorkerInfo:
     """
 
     worker_addr: str
+    worker_status: WorkerStatus
     providers: dict[str, ProviderInfo]  # name -> ProviderInfo
 
     def get_provider_by_name(self, name: str) -> ProviderInfo | None:
