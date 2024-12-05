@@ -72,17 +72,19 @@
   }
   .Topline{
     display: flex;
+    align-items:center;
+    height:40px;
   }
   .Topline button{
     color:grey;
     border-radius: 15px;
     width: 13%;
-    height:95%;
+    height:80%;
     float:right;
     cursor:pointer;
-    margin-bottom: 2%;
+    margin-bottom: 1%;
     margin-left: 90%;
-    transition: background-color 0.3s, transform 0.1s;
+
 
   }
   .workers {

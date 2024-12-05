@@ -1,20 +1,57 @@
-import React, {useState} from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, {useState,useEffect} from 'react';
+import { Link, useNavigate,useParams } from 'react-router-dom';
 import LogoImage from '../../../assets/logo.png';
 import WordImage from '../../../assets/word.png';
 import styles from './styles.module.scss';
-import  Modal from '../../DomainWindow';
+import  Modal1 from '../../DomainWindow';
+import { Domain, getDomain } from '../../../api/domain';
+import { Download,getDownloadList } from '../../../api/download';
+import Modal2 from '../../DownloadWindow';
+
 
 const FirstSection: React.FC<{ showNav?: boolean }> = ({ showNav = true }) => {
   const navigate = useNavigate();
-  const [isModalOpen, setIsModalOpen] = useState(false); // 弹窗状态
+  const [isModalOpen, setIsModalOpen] = useState(false); // 弹窗状态(domain)
+  const [isDownloadOpen, setIsDownloadOpen] = useState(false); // 弹窗状态(download)
+  const { resource_name } = useParams<{ resource_name: string }>(); // 获取路由参数
+  const [domain, setDomain]=useState<Domain | null>(null);
+  const [downloads, setDownloads]=useState<Download[] | null>(null);
+
+  useEffect(() =>{
+    const fetchDomain = async () => {
+      try {
+        const data =await getDomain();
+        console.log('获取的域名:', data);
+        setDomain(data);
+      }catch (err){
+        console.error('加载域名失败:', err);
+
+    }
+  };
+  fetchDomain();
+}, []);
+  useEffect(() =>{
+    const fetchDownload = async (resourceName:string) => {
+      try {
+        const data =await getDownloadList(resourceName);
+        console.log('获取的下载:', data);
+        setDownload(data);
+      }catch (err){
+        console.error('加载下载失败:', err);
+
+    }
+  };
+  if(resource_name){
+  fetchDownload(resource_name);
+  }
+}, [resource_name]);
 
   const handleAdClick = () => {
     navigate('/announcement');
   };
 
   const handleDownloadClick = () => {
-    navigate('/download');
+    setIsDownloadOpen(true); // 打开弹窗
   };
 
   const handleDomainClick = () => {
@@ -27,6 +64,9 @@ const FirstSection: React.FC<{ showNav?: boolean }> = ({ showNav = true }) => {
 
   const closeModal = () => {
     setIsModalOpen(false); // 关闭弹窗
+  };
+  const closeDownload = () => {
+    setIsDownloadOpen(false); // 关闭弹窗
   };
 
   return (
@@ -47,17 +87,29 @@ const FirstSection: React.FC<{ showNav?: boolean }> = ({ showNav = true }) => {
       </div>
 
       {/* 弹窗内容 */}
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <div className={styles.DomainSection}>
-          <h2>域名选择</h2>
-          <ul>
-            <li>自动选择: https://mirrors.kagami.must.edu.cn</li>
-            <li>IPv4: https://mirrors6.kagami.must.edu.cn</li>
-            <li>IPv6: https://mirrors4.kagami.must.edu.cn</li>
-          </ul>
-        </div>
-      </Modal>
-    </div>
+      <Modal1 isOpen={isModalOpen} onClose={closeModal}>
+  <div className={styles.DomainSection}>
+    <h2>域名选择</h2>
+    {domain ? (
+      <ul>
+        <li className={styles.domainItem}>
+          <strong>自动选择:</strong> {domain.autoSelect_ip}
+        </li>
+        <li className={styles.domainItem}>
+          <strong>IPv4:</strong> {domain.ipv4}
+        </li>
+        <li className={styles.domainItem}>
+          <strong>IPv6:</strong> {domain.ipv6}
+        </li>
+      </ul>
+    ) : (
+      <p>正在加载域名数据...</p> // 占位内容
+    )}
+  </div>
+</Modal1>
+  <Modal2 isOpen={isDownloadOpen} onClose={closeDownload}>
+  </Modal2>
+  </div>
   );
 };
 
