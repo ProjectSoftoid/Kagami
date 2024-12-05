@@ -1,12 +1,9 @@
-from functools import lru_cache
+import logging
 from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-
-@lru_cache
-def get_configs():
-    return SupervisorConfig()
+logger = logging.getLogger(__name__)
 
 class SupervisorConfig(BaseSettings):
     model_config = SettingsConfigDict(
@@ -24,3 +21,20 @@ class SupervisorConfig(BaseSettings):
     log_file: str = "/var/log/kagami.log"
     log_level: str = "INFO"
     database_url: str = "change_me"
+
+class ConfigManager:
+    overrides: dict
+    prebuild_config: SupervisorConfig
+
+    @classmethod
+    def init(cls, overrides: dict):
+        cls.prebuild_config = SupervisorConfig(**overrides)
+
+    @classmethod
+    def get_configs(cls) -> SupervisorConfig:
+        if cls.prebuild_config:
+            return cls.prebuild_config
+        else:
+            logger.error("Run ConfigManager without init")
+            cls.prebuild_config = SupervisorConfig()
+            return cls.prebuild_config
