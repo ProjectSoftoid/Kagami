@@ -4,7 +4,6 @@ import HomePage from './page/HomePage/index.js';
 import AnnouncementPage from './page/Announcement/index.js';
 import StatePage from './page/State/index.js';
 import AdminLogin from './page/AdminLogin/index.js';
-import DownloadPage from './page/Download/index.js';
 import AdminDashboard from './page/AdminDashboard/index.js';
 import WorkerDetail from './page/AdminDashboard/WorkerDetail/index.js';
 import HelpPage from './page/HelpPage/index.js';
@@ -16,8 +15,6 @@ function App() {
       <Routes>
         <Route path='/' element={<HomePage />} />
         <Route path='/announcement' element={<AnnouncementPage />} />
-
-        <Route path='/download' element={<DownloadPage />} />
 
         <Route path='/helper/:resource_name' element={<HelpPage />} />
         <Route path='/helper/:resource_name/detail'element={<DetailPage />} />
