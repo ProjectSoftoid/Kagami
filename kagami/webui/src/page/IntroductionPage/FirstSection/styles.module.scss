@@ -1,8 +1,10 @@
+/* 通用设置 */
 .Container {
   position: relative;
   height: -50vh;
 }
 
+/* 顶部导航栏 */
 .firstSection {
   display: flex;
   align-items: center;
@@ -29,7 +31,6 @@
       height: 20px;
       width: auto;
       margin-left: 5px;
-
     }
   }
 
@@ -44,29 +45,67 @@
       text-decoration: none;
       color: #000;
       cursor: pointer; /* 鼠标悬停时显示手型光标 */
-     padding: 5px 10px; /* 添加一些内边距 */
-     border: 1px solid transparent; /* 初始边框透明 */
-     border-radius: 4px; /* 添加圆角 */
-     transition: border-color 0.3s; /* 添加边框颜色过渡效果 */
+      padding: 5px 10px; /* 添加一些内边距 */
+      border: 1px solid transparent; /* 初始边框透明 */
+      border-radius: 4px; /* 添加圆角 */
+      transition: border-color 0.3s; /* 添加边框颜色过渡效果 */
     }
+
     a:hover {
       border-color: #090000ad; /* 鼠标悬停时显示边框 */
     }
   }
 }
+
+/* Modal1 内容样式 */
 .DomainSection {
+  background-color: #333; /* 深灰背景 */
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
+  border-radius: 10px; /* 圆角 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 增加阴影效果 */
+  color: #fff; /* 白色文字 */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
-.domainItem {
-  margin-bottom: 10px;
-  font-size: 1rem;
-  color: #f3f1f1;
-}
+  h2 {
+    font-size: 1.5rem; /* 标题字体大小 */
+    margin-bottom: 15px;
+    border-bottom: 2px solid #444; /* 下划线 */
+    padding-bottom: 10px; /* 标题与下划线之间的间距 */
+  }
 
-.error {
-  color: red;
-  font-weight: bold;
+  ul {
+    list-style: none; /* 移除默认列表样式 */
+    padding: 0;
+
+    .domainItem {
+      display: flex; /* 列表项为水平布局 */
+      align-items: center;
+      margin-bottom: 15px; /* 增加列表项之间的间距 */
+      background-color: #444; /* 列表项背景 */
+      border-radius: 5px; /* 列表项圆角 */
+      padding: 10px; /* 内边距 */
+      transition: background-color 0.3s; /* 背景色渐变过渡 */
+      cursor: pointer; /* 鼠标悬停显示手型光标 */
+
+      &:hover {
+        background-color: #555; /* 鼠标悬停时变深 */
+      }
+
+      strong {
+        margin-right: 10px; /* “自动选择”文字与值之间的间距 */
+        font-weight: bold; /* 强调文字 */
+        color: #ddd; /* 浅灰色文字 */
+      }
+
+      span {
+        color: #fff; /* 白色文字 */
+      }
+    }
+  }
+
+  .error {
+    color: #e74c3c; /* 红色文字 */
+    font-weight: bold; /* 加粗提示 */
+    margin-top: 20px; /* 与内容拉开间距 */
+  }
 }

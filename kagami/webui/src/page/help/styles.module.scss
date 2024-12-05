@@ -90,18 +90,16 @@
     overflow-y: auto;
     text-decoration: none;
   }
-  .Topline{
-    display: flex;
-  }
-  .Topline button{
-    color:grey;
-    border-radius: 15px;
-    width: 13%;
-    height:95%;
-    float:right;
-    cursor:pointer;
-    margin-bottom: 2%;
-    margin-left: 90%;
+  .Topline button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    float: right;
 
-
+    &:hover {
+      background-color: #0056b3;
+    }
   }

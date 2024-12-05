@@ -58,6 +58,7 @@ const DetailSection: React.FC = () => {
   if (detailError || resourceError) {
     return <p>{detailError || resourceError}</p>;
   }
+
   const handleButtonClick = () => {
     navigate(`/helper/${resource_name}`); // 跳转到 detail 路径
   };
@@ -77,47 +78,59 @@ const DetailSection: React.FC = () => {
         </ul>
       </div>
       <div className={styles.content}>
-      <div className={styles.Topline}>
-            <button onClick={handleButtonClick}>Help</button>
+        <div className={styles.Topline}>
+          <button onClick={handleButtonClick}>Help</button>
         </div>
         <div className={styles.textPart}>
-        <h1>{detailData?.name}</h1>
-        <p>
-          <strong>上游 URL:</strong>{' '}
-          <a
-            href={detailData?.upstream_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.url}
-          >
-            {detailData?.upstream_url}
-          </a>
-        </p>
-        <div className={styles.workers}>
-        <h3>Workers</h3>
-        <table>
-  <thead>
-    <tr>
-      <th>名稱</th>
-      <th>副本ID</th>
-      <th>提供方法</th>
-      <th>狀態</th>
-    </tr>
-  </thead>
-  <tbody>
-    {detailData?.workers?.map((worker, index) => (
-      <tr key={index}>
-        <td>{worker.name}</td>
-        <td>{worker.replica_id}</td>
-        <td>{worker.provider_method}</td>
-        <td>{worker.status}</td>
-      </tr>
-    ))}
-  </tbody>
-</table>
-</div>
+          <h1>{detailData?.name}</h1>
+          {detailData?.providers && detailData.providers.length > 0 ? (
+            <>
+              <h3>提供者信息</h3>
+              <table className={styles.providersTable}>
+                <thead>
+                  <tr>
+                    <th>副本 ID</th>
+                    <th>上游 URL</th>
+                    <th>提供方法</th>
+                    <th>状态</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {detailData.providers.map((provider, index) => (
+                    <tr key={index}>
+                      <td>{provider.replica_id}</td>
+                      <td>
+                        <a
+                          href={provider.upstream_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.url}
+                        >
+                          {provider.upstream_url}
+                        </a>
+                      </td>
+                      <td>{provider.provider_method}</td>
+                      <td
+                        className={
+                          provider.status === 'ONLINE'
+                            ? styles.online
+                            : provider.status === 'OFFLINE'
+                            ? styles.offline
+                            : styles.error
+                        }
+                      >
+                        {provider.status}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          ) : (
+            <p>没有提供者信息。</p>
+          )}
+        </div>
       </div>
-    </div>
     </div>
   );
 };
