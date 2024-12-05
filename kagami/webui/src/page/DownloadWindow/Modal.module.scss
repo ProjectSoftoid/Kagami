@@ -1,0 +1,124 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8); /* 更深的遮罩颜色 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modalContent {
+  background: #161616; /* 深黑色背景 */
+  padding: 20px;
+  border-radius: 12px; /* 增加圆角 */
+  width: 600px; /* 加宽内容区域 */
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  color: #ffffff; /* 白色文字 */}
+
+.closeButton {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #ffffff; /* 白色关闭按钮 */
+  cursor: pointer;
+
+  &:hover {
+    color: #ff4d4f; /* 悬停时变为红色 */
+  }
+}
+
+.categories {
+  display: flex;
+  gap: 15px; /* 增大按钮间距 */
+  margin-bottom: 20px;
+
+  button {
+    padding: 10px 20px; /* 增加按钮大小 */
+    border: none;
+    border-radius: 20px; /* 更大的圆角 */
+    background: #333333; /* 深灰背景 */
+    cursor: pointer;
+    color: #ffffff; /* 白色文字 */
+    font-weight: bold;
+
+    &:hover {
+      background: #007bff; /* 悬停时变为蓝色 */
+      color: #ffffff;
+    }
+
+    &.active {
+      background: #007bff; /* 激活状态下的蓝色 */
+      color: #ffffff;
+    }
+  }
+}
+
+.resourceList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  .resourceItem {
+    padding: 10px 15px;
+    border: 1px solid #444; /* 深灰色边框 */
+    margin-bottom: 8px;
+    cursor: pointer;
+    background: #222222; /* 深灰背景 */
+    border-radius: 5px; /* 微圆角 */
+    color: #ffffff; /* 白色文字 */
+    font-size: 1.1rem; /* 略大字体 */
+
+    &:hover {
+      background: #333333; /* 更深灰色 */
+    }
+
+    &.active {
+      background: #007bff; /* 激活状态的蓝色 */
+      border-color: #0056b3;
+    }
+  }
+}
+
+.fileList {
+  ul {
+    list-style: none;
+    padding: 0;
+
+    li {
+      margin-bottom: 10px;
+
+      a {
+        color: #007bff; /* 链接的蓝色 */
+        text-decoration:wavy;
+        font-size: 1rem;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+  button{
+    padding: 10px 20px; /* 增加按钮大小 */
+    border: none;
+    border-radius: 20px; /* 更大的圆角 */
+    background: #333333; /* 深灰背景 */
+    cursor: pointer;
+    color: #ffffff; /* 白色文字 */
+    font-weight: bold;
+}
+}
+.divider {
+  border: none;
+  border-top: 1px solid #444444; /* 深灰分割线 */
+  margin: 20px 0;
+}

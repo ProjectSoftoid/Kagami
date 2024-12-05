@@ -1,0 +1,114 @@
+.statePage {
+  min-height: 100vh;
+  background-color: #fff;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  :global {
+    .Container {
+      width: 100%;
+      
+      .firstSection {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 2;
+        background-color: #fff;
+      }
+    }
+  }
+
+  &::after {
+    content: '';
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
+    width: 500px;
+    height: 500px;
+    background-image: url('../../assets/background.png');
+    background-repeat: no-repeat;
+    background-position: left bottom;
+    background-size: contain;
+    opacity: 0.95;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .monitorContainer {
+    position: relative;
+    z-index: 1;
+    margin: 10px auto 24px;
+    max-width: 1200px;
+    width: 95%;
+    background-color: #333333;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    
+    .monitorHeader {
+      padding: 16px 24px;
+      background: #333333;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      
+      .title {
+        color: #fff;
+        font-size: 20px;
+        font-weight: 500;
+        margin: 0;
+      }
+    }
+
+    .monitorContent {
+      padding: 20px;
+
+      .section {
+        margin-bottom: 24px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        .sectionTitle {
+          color: #fff;
+          font-size: 16px;
+          margin-bottom: 16px;
+          font-weight: 500;
+          padding-left: 12px;
+          position: relative;
+
+          &::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 16px;
+            background: #64B5F6;
+            border-radius: 2px;
+          }
+        }
+      }
+    }
+  }
+  
+  .card {
+    background: #3d3d3d;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    
+    :global {
+      .ant-card-body {
+        padding: 16px;
+      }
+    }
+  }
+
+  :global {
+    .Container {
+      width: 100%;
+    }
+  }
+}

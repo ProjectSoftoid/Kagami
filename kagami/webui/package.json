@@ -1,0 +1,72 @@
+{
+  "name": "work",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.5.2",
+    "@types/node": "^22.10.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "antd": "^5.22.2",
+    "axios": "^1.7.8",
+    "echarts": "^5.5.1",
+    "markdown-it": "^14.1.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.28.0",
+    "sass": "^1.80.6",
+    "typescript": "^4.9.5",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "vite",
+    "build": "vite build",
+    "lint": "xo"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@types/markdown-it": "^14.1.2",
+    "@vitejs/plugin-react": "^4.3.4",
+    "sass-embedded": "^1.81.0",
+    "vite": "^6.0.0",
+    "xo": "^0.59.3"
+  },
+  "xo": {
+    "space": 2,
+    "rules": {
+      "no-unused-vars": "off",
+      "import/extensions": "off",
+      "n/file-extension-in-import": "off",
+      "unicorn/filename-case": "off",
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/object-curly-spacing": [
+        "error",
+        "always"
+      ],
+      "@typescript-eslint/no-floating-promises": "warn",
+      "unicorn/prevent-abbreviations": "warn",
+      "@typescript-eslint/naming-convention": "off",
+      "@typescript-eslint/no-unsafe-return": "warn"
+    }
+  }
+}
