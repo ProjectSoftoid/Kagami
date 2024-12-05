@@ -14,6 +14,7 @@ grpcio-tools = "^1.67.0"
 pydantic-settings = "^2.5.2"
 starlette = "^0.41.2"
 bcrypt = "^4.2.1"
+uvicorn = "^0.32.1"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.6.8"

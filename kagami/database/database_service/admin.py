@@ -37,7 +37,7 @@ class AdminService:
         if not origin_account:
             logger.error("delete_admin: id(", admin_id, ") is not found")
         self._session.delete(origin_account)
-        self._session.commit()
+        await self._session.commit()
 
     async def update_admin(
         self,

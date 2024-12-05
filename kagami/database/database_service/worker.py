@@ -34,7 +34,7 @@ class WorkerService:
         if not origin_worker:
             logger.error("delete_workerinfo: address(", worker_addr, ") is not found")
         self._session.delete(origin_worker)
-        self._session.commit()
+        await self._session.commit()
 
     async def update_workerinfo(
         self, worker_addr: str | None, reg_status: WorkerRegStatus | None
@@ -46,4 +46,7 @@ class WorkerService:
             origin_worker.worker_addr = worker_addr
         if reg_status:
             origin_worker.worker_reg_status = reg_status
-        self._session.commit()
+        await self._session.commit()
+
+    async def list_all_worker(self) -> list[Worker | None]:
+        return await self._session.execute(select(Worker))

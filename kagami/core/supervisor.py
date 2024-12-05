@@ -1,9 +1,15 @@
 import logging
 
+# from sqlalchemy import select
 import grpc
 
 from ...grpc.supervisor import supervisor_pb2_grpc
 from ...grpc.worker import worker_pb2, worker_pb2_grpc
+
+# from ..config import SupervisorConfig
+# from ..database.database_service import WorkerService
+# from ..database.models.worker import Worker
+# from ..database.session import session_generator
 from .models import ResourceInfo, WorkerInfo
 from .models.provider_info import ProviderStatus
 from .models.resource_info import ResourceStatus
@@ -24,7 +30,6 @@ class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
         supervisor_host: str,
         supervisor_port: int,
         worker_info_list: list[WorkerInfo | None],
-        resource_info_list: list[ResourceInfo | None],
     ):
         super().__init__()
         self.supervisor_addr = self._parse_address(supervisor_host, supervisor_port)
@@ -35,18 +40,23 @@ class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
                 raw_worker_info[worker_info.worker_addr] = worker_info
         self.registered_workers = raw_worker_info
 
-        # build resource_info
-        raw_resource_info = {}
-        for resource_info in resource_info_list:
-            if resource_info is not None:
-                raw_resource_info[resource_info.name] = resource_info
-
         self.unregistered_worker = []
 
-    # TODO load config from database and configuration file
     # @classmethod
-    # def load(self) -> "Supervisor":
-    #     return Supervisor()
+    # async def load(cls, config: SupervisorConfig) -> "Supervisor":
+    #     # reserve for load from config
+    #     # Load the worker from database (if not init)
+    #     worker_service = WorkerService(session=session_generator())
+    #     workers = await worker_service._session.execute(
+    #         select(Worker)
+    #     )  # TODO alternative database service
+    #     for worker in workers:
+    #        # TODO query from worker
+    #     return Supervisor(
+    #         supervisor_host=config.supervisor_host,
+    #         supervisor_port=config.supervisor_port,
+    #         worker_info_list = []
+    #     )
 
     """
     gRPC function
@@ -74,32 +84,9 @@ class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
         provider = worker.get_provider_by_replica_id(provider_replica_id)
         if provider is not None:
             provider.provider_status = ProviderStatus(provider_status)
+            self.rebuild_resource_info(provider.name)
         else:
             logger.error(f"Provider not found for: {worker_addr}:{provider_replica_id}")
-
-    """
-    supervisor function
-    register_worker()
-    Accept worker report in.
-    """
-
-    async def regiser_worker(self, worker_addr: str):
-        if worker_addr in self.unregistered_worker:
-            logger.info(f"Accepted worker: {worker_addr}")
-            async with grpc.aio.insecure_channel(worker_addr) as channel:
-                stub = worker_pb2_grpc.WorkerStub(channel=channel)
-                # TODO secure channel
-                request = worker_pb2.RegisterResponse(accepted=True)
-                try:
-                    # send register_accepted to worker with gRPC
-                    response = stub.register_accepted(request)
-                    self.unregistered_worker.pop()
-                    logger.info(f"Accepted register from worker: {worker_addr}")
-                    logger.debug(f"Response: {response}")
-                except grpc.RpcError as e:
-                    logger.exception(
-                        f"Failed to send register_accepted to worker: {worker_addr},{e}"
-                    )
 
     """
     supervisor function
@@ -112,6 +99,30 @@ class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
 
     """
     supervisor function
+    get_resource_status()
+    Get status of a resource.
+    """
+
+    async def get_resource_status(self, name: str) -> ResourceStatus | None:
+        resource = self.resources.get(name)
+        resource_status = None
+        if resource is not None:
+            resource_status = resource.status
+        else:
+            logger.error(f"Could not get resource status of: {name}")
+        return resource_status
+
+    """
+    supervisor function
+    list_resource()
+    List all the resource record in supervisor
+    """
+
+    async def list_resource(self) -> dict[str, ResourceInfo]:
+        return self.resources
+
+    """
+    supervisor remote function
     check_worker_health()
     Check worker's connectivity by exchanging supervisor_addr and worker_addr
     """
@@ -141,28 +152,90 @@ class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
                 )
 
     """
-    supervisor function
-    get_resource_status()
-    Get status of a resource.
+    supervisor remote function
+    register_worker()
+    Accept worker report in.
     """
 
-    async def get_resource_status(self, name: str) -> ResourceStatus | None:
-        resource = self.resources.get(name)
-        resource_status = None
-        if resource is not None:
-            resource_status = resource.status
+    async def regiser_worker(self, worker_addr: str):
+        if worker_addr in self.unregistered_worker:
+            logger.info(f"Accepted worker: {worker_addr}")
+            async with grpc.aio.insecure_channel(worker_addr) as channel:
+                stub = worker_pb2_grpc.WorkerStub(channel=channel)
+                # TODO secure channel
+                request = worker_pb2.RegisterResponse(accepted=True)
+                try:
+                    # send register_accepted to worker with gRPC
+                    response = stub.register_accepted(request)
+                    self.unregistered_worker.pop()
+                    logger.info(f"Accepted register from worker: {worker_addr}")
+                    logger.debug(f"Response: {response}")
+                except grpc.RpcError as e:
+                    logger.exception(
+                        f"Failed to send register_accepted to worker: {worker_addr},{e}"
+                    )
+
+    """
+    supervisor function
+    rebuild_resource_info()
+    rebuild resource info from infomation provided by worker.
+    maintain the resource_info since it does not store in database and worker.
+    call update if resources or providers have changes.
+    """
+
+    async def rebuild_resource_info(self, resource_name: str) -> None:
+        raw_worker_info_list = []
+        raw_provider_info_list = []
+        provide_info_count = 0
+        failed_providers_count = 0
+        syncing_provider_count = 0
+        raw_status = ResourceStatus.READY
+
+        resource_info = self.resources.get(resource_name)
+
+        for worker_info in self.registered_workers.values():
+            provide_info = worker_info.providers.get(resource_name)
+            if not provide_info:
+                continue
+            raw_worker_info_list.append(worker_info)
+            raw_provider_info_list.append(provide_info)
+            # check resource status
+            provide_info_count += 1
+            syncing_provider_count += (
+                1 if provide_info.provider_status == ProviderStatus.SYNCING else 0
+            )
+            failed_providers_count += (
+                1 if provide_info.provider_status == ProviderStatus.FAILED else 0
+            )
+        # check resource status
+        # if all the providers of a resource are failed, status -> ERROR
+        if failed_providers_count > 0:
+            raw_status = (
+                ResourceStatus.ERROR
+                if failed_providers_count == provide_info_count
+                else ResourceStatus.FAILED
+            )
+        elif syncing_provider_count > 0:
+            raw_status = ResourceStatus.SYNCING
+
+        if resource_info:
+            resource_info.status = raw_status
+            resource_info.update_workers(raw_worker_info_list)
+            resource_info.update_providers(raw_provider_info_list)
         else:
-            logger.error(f"Could not get resource status of: {name}")
-        return resource_status
+            raw_resource_info = ResourceInfo(
+                name=resource_name,
+                status=raw_status,
+                worker_info_list=raw_worker_info_list,
+                provider_info_list=raw_provider_info_list,
+            )
+            self.resources[resource_name] = raw_resource_info
 
     """
     supervisor function
-    list_resource()
-    List all the resource record in supervisor
+    TODO update_resource_info()
+    rebuild cost is high.
     """
-
-    async def list_resource(self) -> dict[str, ResourceInfo]:
-        return self.resources
 
     @staticmethod
     def _parse_address(host: str, port: int):

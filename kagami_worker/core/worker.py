@@ -88,7 +88,7 @@ class Worker(worker_pb2_grpc.WorkerServicer):
             )
 
     """
-    worker function
+    worker remote function
     report_in()
     Send register request to supervisor (first connect).
     """
@@ -119,7 +119,7 @@ class Worker(worker_pb2_grpc.WorkerServicer):
                     )
 
     """
-    worker function
+    worker remote function
     update_provider_status()
     Update provider status to supervisor, using gRPC call.
     Call this when provider status has changed.
