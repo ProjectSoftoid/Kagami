@@ -1,6 +1,14 @@
+import logging
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..models.worker import Worker, WorkerRegStatus
+
+logging.basicConfig(
+    level=logging.DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+
+logger = logging.getLogger(__name__)
 
 
 class WorkerService:
@@ -23,6 +31,8 @@ class WorkerService:
 
     async def delete_workerinfo(self, worker_addr: str):
         origin_worker = await self._get(worker_addr=worker_addr)
+        if not origin_worker:
+            logger.error("delete_workerinfo: address(", worker_addr, ") is not found")
         self._session.delete(origin_worker)
         self._session.commit()
 
@@ -30,6 +40,8 @@ class WorkerService:
         self, worker_addr: str | None, reg_status: WorkerRegStatus | None
     ):
         origin_worker = await self._get(worker_addr=worker_addr)
+        if not origin_worker:
+            logger.error("update_workerinfo: address(", worker_addr, ") is not found")
         if worker_addr:
             origin_worker.worker_addr = worker_addr
         if reg_status:
