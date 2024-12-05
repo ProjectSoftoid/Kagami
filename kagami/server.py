@@ -5,11 +5,11 @@ from fastapi import FastAPI
 
 import grpc
 
-from .config import get_configs
+from .config import ConfigManager
 from .core import Supervisor
 from .grpc import supervisor_pb2_grpc
 
-config = get_configs()
+config = ConfigManager.get_configs()
 logger = logging.getLogger("uvicorn.error")
 supervisor = None
 
