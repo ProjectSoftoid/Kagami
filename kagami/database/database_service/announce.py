@@ -1,5 +1,6 @@
 import logging
 
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..models.announce import Announce
@@ -42,3 +43,6 @@ class AnnounceService:
         if new_title:
             origin_announce.title = new_title
         await self._session.commit()
+
+    async def list_announce(self) -> list[Announce]:
+        return await self._session.execute(select(Announce))
