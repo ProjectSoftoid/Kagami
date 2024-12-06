@@ -8,7 +8,7 @@ from ..models.helper import Helper
 logger = logging.getLogger(__name__)
 
 
-class AnnounceService:
+class HelperService:
     _session: AsyncSession
 
     def __init__(self, session: AsyncSession) -> None:
