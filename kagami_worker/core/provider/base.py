@@ -3,10 +3,10 @@ from enum import Enum
 
 
 class ProviderStatus(Enum):
-    INIT = "init"
-    SYNCING = "syncing"
-    SUCCESS = "success"
-    FAILED = "failed"
+    INIT = 0
+    SYNCING = 1
+    SUCCESS = 2
+    FAILED = 3
 
 
 class BaseProvider(ABC):

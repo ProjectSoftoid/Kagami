@@ -634,6 +634,24 @@ files = [
 ]
 
 [[package]]
+name = "protoletariat"
+version = "3.3.2"
+description = "Python protocol buffers for the rest of us"
+optional = false
+python-versions = "<4.0,>=3.8"
+files = [
+    {file = "protoletariat-3.3.2-py3-none-any.whl", hash = "sha256:341fb79ac8289510c5a4833581d978d389dadbfb40f3d31c2fcd62ebdcbeeb43"},
+    {file = "protoletariat-3.3.2.tar.gz", hash = "sha256:a6a18089064b53767a72ded3be6b522cc813ff3401e3ed8c1dfbbd923eef09fa"},
+]
+
+[package.dependencies]
+click = ">=8,<9"
+protobuf = ">=3.19.1,<6"
+
+[package.extras]
+grpcio-tools = ["grpcio-tools (>=1.42.0,<2)"]
+
+[[package]]
 name = "pydantic"
 version = "2.9.2"
 description = "Data validation using Python type hints"
@@ -1113,4 +1131,4 @@ test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "50f19e16941e2f92d58b9e398da07ebd96bb091288b96c2736ae0a37191c26a1"
+content-hash = "df0588cb5912be68cf315601e87bc9e628a6e8f92cd451aaa2bb599b32e4dd7a"

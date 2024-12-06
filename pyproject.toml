@@ -15,6 +15,9 @@ pydantic-settings = "^2.5.2"
 starlette = "^0.41.2"
 bcrypt = "^4.2.1"
 uvicorn = "^0.32.1"
+protoletariat = "^3.3.2"
+python-dotenv = "^1.0.1"
+click = "^8.1.7"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.6.8"
@@ -28,22 +31,15 @@ mypy = "^1.11.2"
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.black]
-target-version = ['py311']
-force-exclude = '''
-/(
-    grpc/.*
-)
-'''
 
 [tool.ruff]
 target-version = "py311"
-select = ["F","E","W","UP","I"]
+lint.select = ["F","E","W","UP","I"]
 exclude = [
-"grpc/*"
+"grpc/*", "kagami/grpc/*", "kagami_worker/grpc/*"
 ]
 
 [tool.mypy]
 python_version = "3.11"
 ignore_missing_imports = true
-exclude = "^grpc/*"
+exclude = ["^grpc/*", "^kagami/grpc/*", "^kagami_worker/grpc/*"]
