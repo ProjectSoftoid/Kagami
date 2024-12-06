@@ -121,6 +121,18 @@ class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
         return self.resources
 
     """
+    supervisor function
+    get_resource_info()
+    Get a resource info
+    """
+
+    async def get_resource_info(self, resource_name: str) -> ResourceInfo | None:
+        resource = self.resources.get(resource_name)
+        if not resource:
+            logger.error(f"Resouce not found: {resource_name}")
+        return resource
+
+    """
     supervisor remote function
     check_worker_health()
     Check worker's connectivity by exchanging supervisor_addr and worker_addr
@@ -227,6 +239,7 @@ class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
                 status=raw_status,
                 worker_info_list=raw_worker_info_list,
                 provider_info_list=raw_provider_info_list,
+                has_helper=True # TODO Helper
             )
             self.resources[resource_name] = raw_resource_info
 

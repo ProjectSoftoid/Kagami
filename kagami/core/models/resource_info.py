@@ -26,6 +26,7 @@ class ResourceInfo:
     status: ResourceStatus
     workers: dict[str, WorkerInfo]  # worker_addr -> WorkerInfo
     providers: dict[str, ProviderInfo]  # resource_name -> ProviderInfo
+    has_helper: bool
 
     def __init__(
         self,
@@ -33,11 +34,13 @@ class ResourceInfo:
         status: ResourceStatus,
         worker_info_list: list[WorkerInfo],
         provider_info_list: list[ProviderInfo],
+        has_helper: bool
     ):
         self.name = name
         self.status = status
         self.update_workers(worker_info_list)
         self.update_providers(provider_info_list)
+        self.has_helper = True # TODO helper
 
     def update_workers(self, worker_info_list: list[WorkerInfo]):
         for worker_info in worker_info_list:
