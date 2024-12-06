@@ -1,5 +1,6 @@
 import logging
 
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.types import TEXT
 
@@ -40,3 +41,6 @@ class HelperService:
         if new_content:
             origin_helper.content = new_content
         await self._session.commit()
+
+    async def list_helpers(self) -> list[Helper]:
+        return await self._session.execute(select(Helper))
