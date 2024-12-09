@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 
 from ..database.database_service import AnnounceService
@@ -19,9 +19,11 @@ class AnnounceResponse(BaseModel):
 
 
 @root_router.get("annoucement", response_model=list[AnnounceResponse])
-async def get_announcement(db_session: SessionDeps):
+async def get_announcement(request: Request, db_session: SessionDeps):
+    page = request.page
+    page_size = request.limit
     announce_service = AnnounceService(session=db_session)
-    announcements = await announce_service.list_announce()
+    announcements = await announce_service.list_announce(page=page, page_size=page_size)
     if announcements:
         return [
             {
@@ -35,4 +37,4 @@ async def get_announcement(db_session: SessionDeps):
             for announcement in announcements
         ]
     else:
-        raise HTTPException(status_code=404, detail="No announcement found")
+        raise HTTPException(status_code=500, detail="No announcement found")
