@@ -45,5 +45,5 @@ class WorkerService:
             origin_worker.worker_reg_status = reg_status
         await self._session.commit()
 
-    async def list_all_worker(self) -> list[Worker | None]:
+    async def list_all_worker(self) -> list[Worker]:
         return await self._session.execute(select(Worker))

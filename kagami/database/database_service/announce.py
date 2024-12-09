@@ -44,5 +44,10 @@ class AnnounceService:
             origin_announce.title = new_title
         await self._session.commit()
 
-    async def list_announce(self) -> list[Announce]:
-        return await self._session.execute(select(Announce))
+    async def list_announce(self, page: int, page_size: int) -> list[Announce]:
+        # NOTE: page starts from 1
+        offset = (page - 1) * page_size
+        result = await self._session.execute(
+            select(Announce).limit(page_size).offset(offset=offset)
+        )
+        return result.scalars().all()
