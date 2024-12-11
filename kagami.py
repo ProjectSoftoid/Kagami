@@ -15,11 +15,11 @@ def cmdline():
 @click.option("--http-port", help="Set HTTP listening port.")
 @click.option("--grpc-host", help="Set gRPC listening host.")
 @click.option("--grpc-port", help="Set gRPC listening port.")
-def start_supervisor(debug_level, http_host, http_port, grpc_host, grpc_port):
+def start_supervisor(log_level, http_host, http_port, grpc_host, grpc_port):
     from kagami.config import ConfigManager
 
     overrides = {
-        "log_level": debug_level,
+        "log_level": log_level,
         "http_host": http_host,
         "http_port": http_port,
         "grpc_host": grpc_host,
@@ -33,7 +33,7 @@ def start_supervisor(debug_level, http_host, http_port, grpc_host, grpc_port):
     import uvicorn
 
     from kagami.server import kagami_server
-
+    logging.basicConfig(level=log_level)
     uvicorn.run(kagami_server, host=config.http_host, port=config.http_port)
 
 
@@ -43,18 +43,19 @@ def start_supervisor(debug_level, http_host, http_port, grpc_host, grpc_port):
 @click.option("--grpc-port", help="Set gRPC listening port.")
 @click.option("--supervisor-host", help="Set supervisor host.")
 @click.option("--supervisor-port", help="Set supervisor port.")
-def start_worker(debug_level, grpc_host, grpc_port, supervisor_host, supervisor_port):
+def start_worker(log_level, grpc_host, grpc_port, supervisor_host, supervisor_port):
     from kagami_worker.config import ConfigManager
 
     overrides = {
-        "log_level": debug_level,
+        "log_level": log_level,
         "grpc_host": grpc_host,
         "grpc_port": grpc_port,
         "supervisor_host": supervisor_host,
         "supervisor_port": supervisor_port,
     }
     overrides = {k: v for k, v in overrides.items() if v is not None}
-    logging.basicConfig(level=debug_level)
+
+    logging.basicConfig(level=log_level)
     ConfigManager.init(overrides=overrides)
 
     from kagami_worker.server import start_worker

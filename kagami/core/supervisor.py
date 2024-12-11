@@ -3,7 +3,7 @@ import logging
 # from sqlalchemy import select
 import grpc
 
-from ..grpc import supervisor_pb2_grpc, worker_pb2, worker_pb2_grpc
+from ..grpc import supervisor_pb2, supervisor_pb2_grpc, worker_pb2, worker_pb2_grpc
 
 # from ..config import SupervisorConfig
 # from ..database.database_service import WorkerService
@@ -68,6 +68,9 @@ class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
         # worker_status = request.worker_status
         logger.info(f"Recive worker report in: {worker_addr}")
         self.unregistered_worker.append(worker_addr)
+        return supervisor_pb2.WorkerReportInResponse(
+            supervisor_addr=self.supervisor_addr
+        )
 
     """
     gRPC function
@@ -86,6 +89,10 @@ class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
             self.rebuild_resource_info(provider.name)
         else:
             logger.error(f"Provider not found for: {worker_addr}:{provider_replica_id}")
+
+        return supervisor_pb2.UpdateProviderStatusResponse(
+            provider_id=provider_replica_id
+        )
 
     """
     supervisor function
@@ -148,7 +155,7 @@ class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
             )
             try:
                 # send register_accepted to worker with gRPC
-                response = stub.health_check(request)
+                response = await stub.health_check(request)
                 # check worker_addr in response
                 assert worker_addr == response.worker_addr
                 logger.debug(f"Health check successfully: {worker_addr}")
@@ -177,7 +184,7 @@ class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
                 request = worker_pb2.RegisterResponse(accepted=True)
                 try:
                     # send register_accepted to worker with gRPC
-                    response = stub.register_accepted(request)
+                    response = await stub.register_accepted(request)
                     self.unregistered_worker.pop()
                     logger.info(f"Accepted register from worker: {worker_addr}")
                     logger.debug(f"Response: {response}")
@@ -239,7 +246,7 @@ class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
                 status=raw_status,
                 worker_info_list=raw_worker_info_list,
                 provider_info_list=raw_provider_info_list,
-                has_helper=True # TODO Helper
+                has_helper=True,  # TODO Helper
             )
             self.resources[resource_name] = raw_resource_info
 
