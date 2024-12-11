@@ -1,3 +1,4 @@
+import asyncio
 import logging
 
 import grpc
@@ -32,6 +33,8 @@ class Worker(worker_pb2_grpc.WorkerServicer):
         self.providers = {}
         for provider in providers:
             self.providers[provider.name] = provider
+
+        self.registered = False  # TODO read from file
 
     """
     gRPC function
@@ -92,7 +95,9 @@ class Worker(worker_pb2_grpc.WorkerServicer):
     """
 
     async def report_in(self):
-        await self._register_report_in()
+        while not self.registered:
+            await self._register_report_in()
+            await asyncio.sleep(15)
 
     async def _register_report_in(self):
         if not self.registered:
@@ -103,13 +108,15 @@ class Worker(worker_pb2_grpc.WorkerServicer):
                 # TODO send provider infos
                 # provider_names = list(self.providers.keys())
                 request = supervisor_pb2.WorkerReportInRequest(
-                    worker_addr=self.worker_addr, worker_status=self.get_worker_status()
+                    worker_addr=self.worker_addr
                 )
 
                 try:
                     # send report_in request with gRPC
                     response = stub.worker_report_in(request)
-                    logger.info(f"Worker: {self.worker_addr} sent report in")
+                    logger.info(
+                        f"Worker sent report_in to supervisor {self.supervisor_addr}"
+                    )
                     logger.debug(f"Response: {response}")
                 except grpc.RpcError as e:
                     logger.exception(
@@ -141,9 +148,7 @@ class Worker(worker_pb2_grpc.WorkerServicer):
                 logger.info(f"Provider: {name} sent update status")
                 logger.debug(f"Response: {response}")
             except grpc.RpcError as e:
-                logger.exception(
-                    f"Failed to send update for provider: {name}: {e}"
-                )
+                logger.exception(f"Failed to send update for provider: {name}: {e}")
 
     """
     utils
