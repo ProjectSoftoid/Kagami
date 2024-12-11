@@ -1,8 +1,23 @@
-from google.protobuf import empty_pb2 as _empty_pb2
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from typing import ClassVar as _ClassVar, Optional as _Optional
 DESCRIPTOR: _descriptor.FileDescriptor
+
+class WorkerReportInResponse(_message.Message):
+    __slots__ = ('supervisor_addr',)
+    SUPERVISOR_ADDR_FIELD_NUMBER: _ClassVar[int]
+    supervisor_addr: str
+
+    def __init__(self, supervisor_addr: _Optional[str]=...) -> None:
+        ...
+
+class UpdateProviderStatusResponse(_message.Message):
+    __slots__ = ('provider_id',)
+    PROVIDER_ID_FIELD_NUMBER: _ClassVar[int]
+    provider_id: str
+
+    def __init__(self, provider_id: _Optional[str]=...) -> None:
+        ...
 
 class WorkerReportInRequest(_message.Message):
     __slots__ = ('worker_addr',)

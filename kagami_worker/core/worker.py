@@ -110,10 +110,11 @@ class Worker(worker_pb2_grpc.WorkerServicer):
                 request = supervisor_pb2.WorkerReportInRequest(
                     worker_addr=self.worker_addr
                 )
+                logger.debug(f"Request: {request}")
 
                 try:
                     # send report_in request with gRPC
-                    response = stub.worker_report_in(request)
+                    response = await stub.worker_report_in(request)
                     logger.info(
                         f"Worker sent report_in to supervisor {self.supervisor_addr}"
                     )
