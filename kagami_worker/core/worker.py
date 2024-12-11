@@ -1,10 +1,13 @@
 import asyncio
+import json
 import logging
+from collections.abc import Sequence
+from pathlib import Path
 
 import grpc
 
-# from ..config import WorkerConfig
-from ..core.provider import BaseProvider
+from ..config import ConfigManager
+from ..core.provider import PROVIDER_CLASS_MAP, BaseProvider
 from ..grpc import supervisor_pb2, supervisor_pb2_grpc, worker_pb2, worker_pb2_grpc
 
 logger = logging.getLogger(__name__)
@@ -23,18 +26,51 @@ class Worker(worker_pb2_grpc.WorkerServicer):
         worker_port: int,
         supervisor_host: str,
         supervisor_port: int,
-        providers: list[BaseProvider],
+        registerd: bool,
+        providers: Sequence[BaseProvider],
     ):
         super().__init__()
         self.worker_addr = self._parse_address(worker_host, worker_port)
         self.supervisor_addr = self._parse_address(supervisor_host, supervisor_port)
         assert self.worker_addr and self.supervisor_addr
 
+        self.registered = registerd
         self.providers = {}
-        for provider in providers:
-            self.providers[provider.name] = provider
+        if providers:
+            for provider in providers:
+                self.providers[provider.name] = provider
 
-        self.registered = False  # TODO read from file
+    @classmethod
+    def load(
+        cls,
+        worker_host: str,
+        worker_port: int,
+        supervisor_host: str,
+        supervisor_port: int,
+        config_folder: Path,
+    ) -> "Worker":
+        provider_info_list = []
+        logger.info(f"Read provider configs from: {config_folder}")
+        for provider_file in config_folder.glob("*.json"):
+            if provider_file:
+                try:
+                    provider_json = json.loads(provider_file.read_bytes())
+                    cls_type = PROVIDER_CLASS_MAP[provider_json.get("provider_method")]
+                    provider = cls_type(**provider_json)
+                    provider_info_list.append(provider)
+                except Exception as e:
+                    logger.exception(f"Read provider config error: {e}")
+
+        # check if registered
+        registered = (config_folder / "registered").exists()
+        return Worker(
+            worker_host=worker_host,
+            worker_port=worker_port,
+            supervisor_host=supervisor_host,
+            supervisor_port=supervisor_port,
+            registerd=registered,
+            providers=provider_info_list,
+        )
 
     """
     gRPC function
@@ -71,6 +107,12 @@ class Worker(worker_pb2_grpc.WorkerServicer):
         if accepted:
             self.registered = True
             message = "Worker Registered"
+
+        # create registered note
+        config = ConfigManager.get_configs()
+        registered_file = config.config_folder / "registered"
+        registered_file.touch()
+
         return worker_pb2.RegisterAck(message=message)
 
     """

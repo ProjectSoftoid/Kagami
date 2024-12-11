@@ -1,12 +1,18 @@
 syntax = "proto3";
 
-import "google/protobuf/empty.proto";
-
 package kagami_supervisor;
 
 service Supervisor {
-    rpc worker_report_in (WorkerReportInRequest) returns (google.protobuf.Empty);
-    rpc update_provider_status (UpdateProviderRequest) returns (google.protobuf.Empty);
+    rpc worker_report_in (WorkerReportInRequest) returns (WorkerReportInRequest);
+    rpc update_provider_status (UpdateProviderRequest) returns (UpdateProviderStatusResponse);
+}
+
+message WorkerReportInResponse {
+    string supervisor_addr = 1;
+}
+
+message UpdateProviderStatusResponse {
+    string provider_id = 1;
 }
 
 message WorkerReportInRequest {

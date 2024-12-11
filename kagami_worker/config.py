@@ -24,6 +24,8 @@ class WorkerConfig(BaseSettings):
     log_level: str = "INFO"
     parallel_limit: int = 10
 
+    config_folder: str = "kagami_worker/worker_config/"
+
 
 class ConfigManager:
     overrides: dict
