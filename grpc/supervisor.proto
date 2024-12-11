@@ -12,7 +12,7 @@ message WorkerReportInResponse {
 }
 
 message UpdateProviderStatusResponse {
-    string provider_id = 1;
+    int32 provider_id = 1;
 }
 
 message WorkerReportInRequest {
