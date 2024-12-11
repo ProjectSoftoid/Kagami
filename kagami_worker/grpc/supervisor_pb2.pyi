@@ -14,9 +14,9 @@ class WorkerReportInResponse(_message.Message):
 class UpdateProviderStatusResponse(_message.Message):
     __slots__ = ('provider_id',)
     PROVIDER_ID_FIELD_NUMBER: _ClassVar[int]
-    provider_id: str
+    provider_id: int
 
-    def __init__(self, provider_id: _Optional[str]=...) -> None:
+    def __init__(self, provider_id: _Optional[int]=...) -> None:
         ...
 
 class WorkerReportInRequest(_message.Message):
