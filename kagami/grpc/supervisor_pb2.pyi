@@ -5,13 +5,11 @@ from typing import ClassVar as _ClassVar, Optional as _Optional
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class WorkerReportInRequest(_message.Message):
-    __slots__ = ('worker_addr', 'worker_status')
+    __slots__ = ('worker_addr',)
     WORKER_ADDR_FIELD_NUMBER: _ClassVar[int]
-    WORKER_STATUS_FIELD_NUMBER: _ClassVar[int]
     worker_addr: str
-    worker_status: int
 
-    def __init__(self, worker_addr: _Optional[str]=..., worker_status: _Optional[int]=...) -> None:
+    def __init__(self, worker_addr: _Optional[str]=...) -> None:
         ...
 
 class RegisterResponse(_message.Message):

@@ -11,7 +11,6 @@ service Supervisor {
 
 message WorkerReportInRequest {
     string worker_addr = 1;
-    int32 worker_status = 2;
 }
 
 message RegisterResponse {
