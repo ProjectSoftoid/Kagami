@@ -1,6 +1,6 @@
-import shlex
 import asyncio
 import logging
+import shlex
 
 from .base import BaseProvider
 
@@ -26,12 +26,16 @@ class RsyncProvider(BaseProvider):
     ):
         super().__init__(name, work_dir, upstream_url, provider_method, retry)
         self.provider_cmdline = None
-        self.rsync_options = rsync_options
+        self.rsync_options = (
+            rsync_options
+            if rsync_options
+            else ["-avzP", "--timeout=120", "--contimeout=120"]
+        )
         self.provider_cmdline = self._build_commandline()
 
     @classmethod
     def from_config(cls, provider_config) -> "RsyncProvider":
-        return cls(
+        return RsyncProvider(
             name=provider_config.name,
             work_dir=provider_config.work_dir,
             upstream_url=provider_config.upstream_url,
@@ -59,14 +63,9 @@ class RsyncProvider(BaseProvider):
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
             )
-            stdout, stderr = await process.communicate()
-
-            if process.returncode == 0:
-                logger.info(f"Sync succeeded:\n {stdout!r}")
-            else:
-                logger.info(f"Sync failed with error:\n {stderr!r}")
-            return process.returncode
+            logger.info(f"Started sync process with PID: {process.pid}")
+            return 0
 
         except Exception as e:
-            logger.exception(f"An error occurred in SyncProvider: {e}")
+            logger.exception(f"An error occurred in RsyncProvider: {e}")
             return 1
