@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
-from ..config import SupervisorConfig
+from ..config import ConfigManager
 
 
 class DatabaseEngine:
@@ -9,8 +9,9 @@ class DatabaseEngine:
 
     @classmethod
     def init(cls):
+        config = ConfigManager.get_configs()
         cls._engine = create_async_engine(
-            SupervisorConfig.database_url, expire_on_commit=False
+            config.database_url, expire_on_commit=False
         )
 
     @classmethod
