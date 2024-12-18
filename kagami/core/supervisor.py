@@ -3,13 +3,11 @@ import logging
 # from sqlalchemy import select
 import grpc
 
+from ..config import ConfigManager
+from ..database.database_service import WorkerService
+from ..database.session import session_generator
 from ..grpc import supervisor_pb2, supervisor_pb2_grpc, worker_pb2, worker_pb2_grpc
-
-# from ..config import SupervisorConfig
-# from ..database.database_service import WorkerService
-# from ..database.models.worker import Worker
-# from ..database.session import session_generator
-from .models import ResourceInfo, WorkerInfo
+from .models import ProviderInfo, ResourceInfo, WorkerInfo
 from .models.provider_info import ProviderStatus
 from .models.resource_info import ResourceStatus
 
@@ -28,34 +26,45 @@ class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
         self,
         supervisor_host: str,
         supervisor_port: int,
-        worker_info_list: list[WorkerInfo | None],
+        worker_info_list: list[WorkerInfo],
     ):
         super().__init__()
         self.supervisor_addr = self._parse_address(supervisor_host, supervisor_port)
         # build worker_info
         raw_worker_info = {}
-        for worker_info in worker_info_list:
-            if worker_info is not None:
+        if worker_info_list:
+            for worker_info in worker_info_list:
                 raw_worker_info[worker_info.worker_addr] = worker_info
         self.registered_workers = raw_worker_info
 
         self.unregistered_worker = []
 
-    # @classmethod
-    # async def load(cls, config: SupervisorConfig) -> "Supervisor":
-    #     # reserve for load from config
-    #     # Load the worker from database (if not init)
-    #     worker_service = WorkerService(session=session_generator())
-    #     workers = await worker_service._session.execute(
-    #         select(Worker)
-    #     )  # TODO alternative database service
-    #     for worker in workers:
-    #        # TODO query from worker
-    #     return Supervisor(
-    #         supervisor_host=config.supervisor_host,
-    #         supervisor_port=config.supervisor_port,
-    #         worker_info_list = []
-    #     )
+    @classmethod
+    async def load(cls) -> "Supervisor":
+        config = ConfigManager.get_configs()
+        # Load the worker from database (if not init)
+        worker_service = WorkerService(session=session_generator())
+        workers = await worker_service.list_all_worker()
+        raw_worker_info_list = []
+        for worker in workers:
+            # Reconnect workers
+            providers = await cls.get_providers(worker_addr=worker.worker_addr)
+            if providers != 1:
+                logger.info(f"Load worker {worker.worker_addr} successfully")
+            else:
+                logger.error(f"Fail to load worker: {worker.worker_addr}")
+            raw_worker_info_list.append(
+                WorkerInfo(
+                    worker_addr=worker.worker_addr,
+                    worker_status=worker.worker_reg_status,
+                    providers=providers if isinstance(providers, list) else [],
+                )
+            )
+        return Supervisor(
+            supervisor_host=config.supervisor_host,
+            supervisor_port=config.supervisor_port,
+            worker_info_list=raw_worker_info_list,
+        )
 
     """
     gRPC function
@@ -138,6 +147,26 @@ class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
         if not resource:
             logger.error(f"Resouce not found: {resource_name}")
         return resource
+
+    """
+    supervisor remote function()
+    get_providers()
+    Get all providers from a worker
+    """
+    @staticmethod
+    async def get_providers(worker_addr: str) -> list[ProviderInfo] | int:
+        async with grpc.aio.insecure_channel(worker_addr) as channel:
+            stub = worker_pb2_grpc.WorkerStub(channel=channel)
+            # TODO secure channel
+            request = worker_pb2.GetProviderRequest(name=None)
+            try:
+                response = await stub.get_providers(request)
+                return response.providers
+            except grpc.RpcError as e:
+                logger.exception(
+                    f"Failed to get providers from worker: {worker_addr}, {e}"
+                )
+                return 0  # Failed to connect to worker
 
     """
     supervisor remote function

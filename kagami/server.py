@@ -17,11 +17,7 @@ supervisor = None
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global supervisor
-    supervisor = Supervisor(
-        supervisor_host=config.grpc_host,
-        supervisor_port=config.grpc_port,
-        worker_info_list=[],
-    )  # TODO load the supervisor from database
+    supervisor = await Supervisor.load()
 
     logger.info(f"HTTP Host: {config.http_host}")
     logger.info(f"HTTP Port: {config.http_port}")
@@ -42,7 +38,9 @@ async def lifespan(app: FastAPI):
 
 kagami_server = FastAPI(lifespan=lifespan)
 
-from .routes import resource_router  # noqa: E402
+from .routes import helper_router, resource_router, root_router  # noqa: E402
 
 # Include Router Area
+kagami_server.include_router(helper_router)
 kagami_server.include_router(resource_router)
+kagami_server.include_router(root_router)
