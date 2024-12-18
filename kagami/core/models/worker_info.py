@@ -5,9 +5,11 @@ from .provider_info import ProviderInfo
 
 logger = logging.getLogger(__name__)
 
+
 class WorkerStatus(enum.Enum):
     CONNECTED = "connected"
     DISCONNECTED = "disconnected"
+
 
 class WorkerInfo:
     """
@@ -26,6 +28,20 @@ class WorkerInfo:
     worker_addr: str
     worker_status: WorkerStatus
     providers: dict[str, ProviderInfo]  # name -> ProviderInfo
+
+    def __init__(
+        self,
+        worker_addr: str,
+        worker_status: WorkerStatus,
+        providers: list[ProviderInfo],
+    ):
+        self.worker_addr = worker_addr
+        self.worker_status = worker_status
+
+        raw_providers = {}
+        for provider in providers:
+            raw_providers[provider.name] = provider
+        self.providers = raw_providers
 
     def get_provider_by_name(self, name: str) -> ProviderInfo | None:
         provider = self.providers.get(name)

@@ -21,11 +21,15 @@ enum ProviderStatus {
     FAILED = 3;
 }
 
-message GetProviderResponse {
+message ProviderInfo {
     string name = 1;
     int64 replica_id = 2;
     string upstreamurl = 3;
     ProviderStatus status = 4;
+}
+
+message GetProviderResponse {
+    repeated ProviderInfo providers = 1;
 }
 
 message SyncRequest {

@@ -83,7 +83,7 @@ class Worker(worker_pb2_grpc.WorkerServicer):
         logger.info(f"Syncing request from supervisor: {source_name}")
 
         # search provider for {source_name}
-        provider = self.get_provider(source_name)
+        provider = self._get_provider(source_name)
         return_code = 1
         msg = ""
         if provider:
@@ -131,6 +131,26 @@ class Worker(worker_pb2_grpc.WorkerServicer):
             )
 
     """
+    gRPC function
+    get_providers()
+    """
+
+    async def get_providers(self, request, context):
+        raw_provider_info = []
+        providers = self._get_provider(name=(request.name if request.name else None))
+        raw_provider_info = [
+            worker_pb2.ProviderInfo(
+                name=provider.name,
+                replica_id=provider.replica_id,
+                upstreamurl=provider.upstreamurl,
+                status=worker_pb2.ProviderStatus.Value(provider.status.name),
+            )
+            for provider in providers
+        ]
+
+        return worker_pb2.GetProviderResponse(providers=raw_provider_info)
+
+    """
     worker remote function
     report_in()
     Send register request to supervisor (first connect).
@@ -175,7 +195,7 @@ class Worker(worker_pb2_grpc.WorkerServicer):
 
     async def update_provider_status(self, name: str):
         logger.info(f"Update provider status for {name}")
-        provider = self.get_provider(name)
+        provider = self._get_provider(name)[0]
         provider_status = provider.provider_status.value if provider else None
         replica_id = provider.replica_id if provider else None
         # TODO secure channel
@@ -199,8 +219,12 @@ class Worker(worker_pb2_grpc.WorkerServicer):
     Return a provider according to the name
     """
 
-    def get_provider(self, name: str) -> BaseProvider | None:
-        return self.providers.get(name)
+    def _get_provider(self, name: str | None = None) -> list[BaseProvider]:
+        if name:
+            provider = self.providers.get(name)
+            return [provider] if provider else []
+        else:
+            return list(self.providers.values())
 
     """
     utils

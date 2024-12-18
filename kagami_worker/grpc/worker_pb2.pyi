@@ -1,7 +1,8 @@
+from google.protobuf.internal import containers as _containers
 from google.protobuf.internal import enum_type_wrapper as _enum_type_wrapper
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
-from typing import ClassVar as _ClassVar, Optional as _Optional, Union as _Union
+from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Mapping, Optional as _Optional, Union as _Union
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class ProviderStatus(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
@@ -23,7 +24,7 @@ class GetProviderRequest(_message.Message):
     def __init__(self, name: _Optional[str]=...) -> None:
         ...
 
-class GetProviderResponse(_message.Message):
+class ProviderInfo(_message.Message):
     __slots__ = ('name', 'replica_id', 'upstreamurl', 'status')
     NAME_FIELD_NUMBER: _ClassVar[int]
     REPLICA_ID_FIELD_NUMBER: _ClassVar[int]
@@ -35,6 +36,14 @@ class GetProviderResponse(_message.Message):
     status: ProviderStatus
 
     def __init__(self, name: _Optional[str]=..., replica_id: _Optional[int]=..., upstreamurl: _Optional[str]=..., status: _Optional[_Union[ProviderStatus, str]]=...) -> None:
+        ...
+
+class GetProviderResponse(_message.Message):
+    __slots__ = ('providers',)
+    PROVIDERS_FIELD_NUMBER: _ClassVar[int]
+    providers: _containers.RepeatedCompositeFieldContainer[ProviderInfo]
+
+    def __init__(self, providers: _Optional[_Iterable[_Union[ProviderInfo, _Mapping]]]=...) -> None:
         ...
 
 class SyncRequest(_message.Message):
