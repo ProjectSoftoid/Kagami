@@ -7,6 +7,7 @@ import grpc
 
 from .config import ConfigManager
 from .core import Supervisor
+from .database.engine import DatabaseEngine
 from .grpc import supervisor_pb2_grpc
 
 config = ConfigManager.get_configs()
@@ -16,6 +17,8 @@ supervisor = None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    DatabaseEngine.init()
+    DatabaseEngine.check_and_create_database()
     global supervisor
     supervisor = await Supervisor.load()
 

@@ -2,6 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engin
 from sqlalchemy.orm import sessionmaker
 
 from ..config import ConfigManager
+from .models.base import BaseModel
 
 
 class DatabaseEngine:
@@ -18,3 +19,8 @@ class DatabaseEngine:
     def session_factory(cls) -> AsyncSession:
         session = sessionmaker(cls._engine)
         return session
+
+    @classmethod
+    async def check_and_create_database(cls):
+        async with cls._engine.begin() as conn:
+            await conn.run_sync(BaseModel.metadata.create_all)
