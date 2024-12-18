@@ -10,6 +10,7 @@ from ..grpc import supervisor_pb2, supervisor_pb2_grpc, worker_pb2, worker_pb2_g
 from .models import ProviderInfo, ResourceInfo, WorkerInfo
 from .models.provider_info import ProviderStatus
 from .models.resource_info import ResourceStatus
+from .models.worker_info import WorkerStatus
 
 logger = logging.getLogger(__name__)
 
@@ -50,13 +51,15 @@ class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
             # Reconnect workers
             providers = await cls.get_providers(worker_addr=worker.worker_addr)
             if providers != 1:
+                worker_status = WorkerStatus.CONNECTED
                 logger.info(f"Load worker {worker.worker_addr} successfully")
             else:
+                worker_status = WorkerStatus.DISCONNECTED
                 logger.error(f"Fail to load worker: {worker.worker_addr}")
             raw_worker_info_list.append(
                 WorkerInfo(
                     worker_addr=worker.worker_addr,
-                    worker_status=worker.worker_reg_status,
+                    worker_status=worker_status,
                     providers=providers if isinstance(providers, list) else [],
                 )
             )
@@ -153,6 +156,7 @@ class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
     get_providers()
     Get all providers from a worker
     """
+
     @staticmethod
     async def get_providers(worker_addr: str) -> list[ProviderInfo] | int:
         async with grpc.aio.insecure_channel(worker_addr) as channel:
