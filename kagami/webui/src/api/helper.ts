@@ -1,27 +1,26 @@
 import api, { ApiError } from './api';
 
 export type Helper = {
-    title: string;
+    name: string;
     content: string;
-    examples: Array<string>;
-    links: Array<{
-        name: string;
-        url: string;
-    }>;
+    last_update: string;
 };
 
-export const getHelper = async (resource_name: string): Promise<Helper> => {
+export const getHelper = async (resource_name: string): Promise<Helper[]> => {
     const response = await api.get(`/helper/${resource_name}`);
     const data = response.data;
     
     // Validate the response data structure
-    if (!data || typeof data !== 'object') {
-        throw new ApiError(400, 'INVALID_RESPONSE', 'Invalid helper data format', data);
+    if (!Array.isArray(data)) {
+        throw new ApiError(400, 'INVALID_RESPONSE', 'Invalid helper data format: expected an array', data);
     }
     
-    if (!data.title || !data.content || !Array.isArray(data.examples) || !Array.isArray(data.links)) {
-        throw new ApiError(400, 'MISSING_FIELDS', 'Helper data is missing required fields', data);
+    // Validate each item in the array
+    for (const item of data) {
+        if (!item.name || !item.content || !item.last_update) {
+            throw new ApiError(400, 'MISSING_FIELDS', 'Helper data item is missing required fields', item);
+        }
     }
     
-    return data as Helper;
+    return data as Helper[];
 };
