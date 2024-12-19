@@ -31,7 +31,7 @@ export const getDownloadList = async (): Promise<Download[]> => {
         typeof item.resource_name !== 'string' ||
         !Array.isArray(item.file_list) ||
         item.file_list.some(
-          (file) => typeof file.version !== 'string' || typeof file.file !== 'string'
+          (file: FileListItem) => typeof file.version !== 'string' || typeof file.file !== 'string'
         )
       ) {
         throw new ApiError(
