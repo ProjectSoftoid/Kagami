@@ -41,4 +41,5 @@ class WorkerService:
         await self._session.commit()
 
     async def list_all_worker(self) -> list[Worker]:
-        return await self._session.execute(select(Worker))
+        result = await self._session.execute(select(Worker))
+        return result.scalars().all()

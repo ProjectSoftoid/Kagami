@@ -13,3 +13,7 @@ async def session_generator() -> AsyncGenerator[AsyncSession]:
         yield session
     finally:
         await session.close()
+
+async def get_session() -> AsyncGenerator[AsyncSession, None]:
+    async with session_generator() as session:
+        yield session

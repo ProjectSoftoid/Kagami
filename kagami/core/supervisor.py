@@ -44,8 +44,10 @@ class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
     async def load(cls) -> "Supervisor":
         config = ConfigManager.get_configs()
         # Load the worker from database (if not init)
-        worker_service = WorkerService(session=session_generator())
-        workers = await worker_service.list_all_worker()
+        async with session_generator() as session:
+            worker_service = WorkerService(session=session)
+            workers = await worker_service.list_all_worker()
+
         raw_worker_info_list = []
         for worker in workers:
             # Reconnect workers
@@ -64,8 +66,8 @@ class Supervisor(supervisor_pb2_grpc.SupervisorServicer):
                 )
             )
         return Supervisor(
-            supervisor_host=config.supervisor_host,
-            supervisor_port=config.supervisor_port,
+            supervisor_host=config.grpc_host,
+            supervisor_port=config.grpc_port,
             worker_info_list=raw_worker_info_list,
         )
 

@@ -21,6 +21,7 @@ class SupervisorConfig(BaseSettings):
     log_file: str = "/var/log/kagami.log"
     log_level: str = "INFO"
     database_url: str = "change_me"
+    database_echo: bool = True
 
 class ConfigManager:
     overrides: dict
