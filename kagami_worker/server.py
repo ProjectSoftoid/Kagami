@@ -1,5 +1,6 @@
 import asyncio
 import logging
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 import grpc
@@ -10,8 +11,8 @@ from .grpc import worker_pb2_grpc
 
 logger = logging.getLogger(__name__)
 
-
-async def start_worker():
+@asynccontextmanager
+async def lifespan():
     config = ConfigManager.get_configs()
     worker = Worker.load(
         worker_host=config.grpc_host,
@@ -31,7 +32,15 @@ async def start_worker():
     grpc_server.add_insecure_port(worker.worker_addr)
     await grpc_server.start()
 
-    loop = asyncio.get_event_loop()
-    loop.create_task(worker.report_in())
+    asyncio.create_task(worker.report_in())
 
-    await grpc_server.wait_for_termination()
+    try:
+        yield
+    finally:
+        logger.info("Shutting down gRPC server...")
+        await grpc_server.stop(0)
+        logger.info("gRPC server shut down successfully.")
+
+async def start_worker():
+    async with lifespan():
+        await asyncio.Future()
