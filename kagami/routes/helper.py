@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from ..database.database_service import HelperService
 from .deps import SessionDeps
 
-helper_router: APIRouter = APIRouter(prefix="helper")
+helper_router: APIRouter = APIRouter(prefix="/helper")
 
 
 class HelperResponse(BaseModel):
