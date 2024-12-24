@@ -218,3 +218,6 @@ stats.html
 *.njsproj
 *.sln
 *.sw?
+
+# database
+*.db

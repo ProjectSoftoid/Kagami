@@ -17,17 +17,19 @@ supervisor = None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    DatabaseEngine.init()
-    DatabaseEngine.check_and_create_database()
-    global supervisor
-    supervisor = await Supervisor.load()
-
     logger.info(f"HTTP Host: {config.http_host}")
     logger.info(f"HTTP Port: {config.http_port}")
     logger.info(f"gRPC Host: {config.grpc_host}")
     logger.info(f"gRPC Port: {config.grpc_port}")
     logger.info(f"Log File: {config.log_file}")
     logger.info(f"Log Level: {config.log_level}")
+    logger.info(f"Database Echo: {config.database_echo}")
+
+    DatabaseEngine.init()
+    await DatabaseEngine.check_and_create_database()
+
+    global supervisor
+    supervisor = await Supervisor.load()
 
     # start gRPC server
     grpc_server = grpc.aio.server()

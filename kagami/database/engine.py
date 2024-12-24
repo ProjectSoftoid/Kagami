@@ -12,13 +12,17 @@ class DatabaseEngine:
     def init(cls):
         config = ConfigManager.get_configs()
         cls._engine = create_async_engine(
-            config.database_url, expire_on_commit=False
+            config.database_url, echo=config.database_echo
         )
 
     @classmethod
     def session_factory(cls) -> AsyncSession:
-        session = sessionmaker(cls._engine)
-        return session
+        async_session = sessionmaker(
+            cls._engine,
+            class_=AsyncSession,
+            expire_on_commit=False
+        )
+        return async_session()
 
     @classmethod
     async def check_and_create_database(cls):
